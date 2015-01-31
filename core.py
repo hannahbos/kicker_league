@@ -16,7 +16,7 @@ HEADER_TEMPLATE = 'name %s\nstarted %f\nhashsum %s\n1st player, 2nd player, game
 
 # calculates an md5 hashsum from entries in table
 def get_hash(data):
-    assert(data.dtype == DTYPE), 'Wrong dtype.'
+    assert(data.dtype == DTYPE), '[critical] Wrong dtype.'
     raw = ''.join(data['1st'])
     raw += ''.join(data['2nd'])
     raw += ''.join([str(x) for x in data['games']])
@@ -58,3 +58,15 @@ def store_data(name, started, data):
     np.savetxt('%s.csv'%name, data, fmt='%s,%s,%d,%d',
                comments='# ', header=header)
     print '[info] Data for %s stored.'%(name)
+
+# add result for first player, second player with games and wins to dataset
+def add_entry_to_data(data, first_player, second_player, games, wins):
+    if first_player in data['1st'] and second_player in data['2nd']:
+        # update if existing
+        idx = np.where(np.logical_and(first_player == data['1st'],
+                                      second_player == data['2nd']))[0]
+        data['games'][idx] += games
+        data['wins'][idx] += wins
+    else:
+        # create new entry if not existing
+        data = np.append(data, np.array([(first_player, second_player, games, wins)], dtype=DTYPE))

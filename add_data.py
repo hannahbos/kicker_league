@@ -19,13 +19,5 @@ while True:
     assert(wins <= games), 'Can not have more wins than games.'
     first_player, second_player = sorted(team.upper().split('/'))
     # check whether this combination exists
-    if first_player in data['1st'] and second_player in data['2nd']:
-        # update if existing
-        idx = np.where(np.logical_and(first_player == data['1st'],
-                                      second_player == data['2nd']))[0]
-        data['games'][idx] += games
-        data['wins'][idx] += wins
-    else:
-        # create new entry if not existing
-        data = np.append(data, np.array([(first_player, second_player, games, wins)], dtype=core.DTYPE))
+    core.add_entry_to_data(data, first_player, second_player, games, wins)
     core.store_data(name, started, data)
