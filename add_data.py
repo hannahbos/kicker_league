@@ -17,6 +17,8 @@ while True:
     games = int(games)
     wins = int(wins)
     assert(wins <= games), 'Can not have more wins than games.'
+    # here we sort the players by alphabet to avoid duplicating entries
+    # with first and second player interchanged
     first_player, second_player = sorted(team.upper().split('/'))
     # check whether this combination exists
     core.add_entry_to_data(data, first_player, second_player, games, wins)
