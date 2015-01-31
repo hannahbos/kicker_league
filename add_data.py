@@ -1,10 +1,9 @@
-import numpy as np
+import sys
 
 import core
 
-LEAGUE = 'test'
-
-name, started, data = core.load_data(LEAGUE)
+league = sys.argv[1]
+name, started, data = core.load_data(league)
 
 print 'Enter results (Return or 0 for exit).'
 while True:
@@ -21,5 +20,5 @@ while True:
     # with first and second player interchanged
     first_player, second_player = sorted(team.upper().split('/'))
     # check whether this combination exists
-    core.add_entry_to_data(data, first_player, second_player, games, wins)
+    data = core.add_entry_to_data(data, first_player, second_player, games, wins)
     core.store_data(name, started, data)

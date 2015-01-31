@@ -70,3 +70,4 @@ def add_entry_to_data(data, first_player, second_player, games, wins):
     else:
         # create new entry if not existing
         data = np.append(data, np.array([(first_player, second_player, games, wins)], dtype=DTYPE))
+    return data

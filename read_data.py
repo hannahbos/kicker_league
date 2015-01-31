@@ -1,9 +1,11 @@
 # import numpy as np
 # import matplotlib.pyplot as plt
 
+import sys
+
 import core
 
-LEAGUE = 'test'
+league = sys.argv[1]
 
-name, started, data = core.load_data(LEAGUE, create_new=False)
+name, started, data = core.load_data(league, create_new=False)
 print data
