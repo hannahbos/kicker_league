@@ -1,35 +1,31 @@
-import h5py_wrapper.wrapper as h5w
-import time
+import numpy as np
 
-LEAGUE = 'season15'
+import core
 
-try:
-    # load old data
-    data = h5w.load_h5('./%s.h5'%(LEAGUE))
-except IOError:
-    # create new dataset if not existing
-    print 'No dataset %s found. Creating new.'%(LEAGUE)
-    data = {}
-    data['start_date'] = time.time()
-    h5w.add_to_h5('./%s.h5'%(LEAGUE), data, overwrite_dataset=True)
+LEAGUE = 'test'
 
-print 'Enter results (0 for exit).'
+name, started, data = core.load_data(LEAGUE)
+
+print 'Enter results (Return or 0 for exit).'
 while True:
-    data = h5w.load_h5('./%s.h5'%(LEAGUE))
     team_games_wins = raw_input('Enter team (p1/p2-games-wins): ')
     if team_games_wins in ['', '0']:
         break
+    # quite painful way to seperate user input to relevant fields
+    # maybe there is a better way
     team, games, wins = team_games_wins.split('-')
     games = int(games)
     wins = int(wins)
     assert(wins <= games), 'Can not have more wins than games.'
-    team_srt = ''.join(sorted(team.upper().split('/')))
-    if team_srt in data.keys():
-        data[team_srt]['games'] += games
-        data[team_srt]['wins'] += wins
+    first_player, second_player = sorted(team.upper().split('/'))
+    # check whether this combination exists
+    if first_player in data['1st'] and second_player in data['2nd']:
+        # update if existing
+        idx = np.where(np.logical_and(first_player == data['1st'],
+                                      second_player == data['2nd']))[0]
+        data['games'][idx] += games
+        data['wins'][idx] += wins
     else:
-        data[team_srt] = {}
-        data[team_srt]['games'] = games
-        data[team_srt]['wins'] = wins
-    h5w.add_to_h5('./%s.h5'%(LEAGUE), data, overwrite_dataset=True)
-    print 'Updated data.'
+        # create new entry if not existing
+        data = np.append(data, np.array([(first_player, second_player, games, wins)], dtype=core.DTYPE))
+    core.store_data(name, started, data)

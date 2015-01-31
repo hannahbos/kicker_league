@@ -1,9 +1,9 @@
 # import numpy as np
 # import matplotlib.pyplot as plt
 
-import h5py_wrapper.wrapper as h5w
+import core
 
-LEAGUE = 'season15'
+LEAGUE = 'test'
 
-data = h5w.load_h5('./%s.h5'%(LEAGUE))
+name, started, data = core.load_data(LEAGUE, create_new=False)
 print data
