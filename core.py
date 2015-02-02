@@ -61,10 +61,11 @@ def store_data(name, started, data):
 
 # add result for first player, second player with games and wins to dataset
 def add_entry_to_data(data, first_player, second_player, games, wins):
-    if first_player in data['1st'] and second_player in data['2nd']:
+    idx = np.where(np.logical_and(first_player == data['1st'],
+                                  second_player == data['2nd']))[0]
+    if len(idx) > 0:
+        assert(len(idx) == 1), '[critical] Corrupt data. Revert and try again.'
         # update if existing
-        idx = np.where(np.logical_and(first_player == data['1st'],
-                                      second_player == data['2nd']))[0]
         data['games'][idx] += games
         data['wins'][idx] += wins
     else:
