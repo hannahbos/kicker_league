@@ -1,3 +1,6 @@
 *~
 .ropeproject/
 *.pyc
+
+Kicker/build/
+
