@@ -29,7 +29,10 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 
 public class KickerInsert extends ActionBarActivity implements View.OnClickListener {
@@ -213,42 +216,33 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
         Button b = (Button) v;
         Log.i("blub", b.getText().toString());
 
-
-        if (b.equals(winners[0])){
-            winners[0] = null;
-            b.getBackground().clearColorFilter();
+        // create new list with winners AND losers to simplify search
+        List<Button> all = new ArrayList<Button>();
+        all.addAll(Arrays.asList(winners));
+        all.addAll(Arrays.asList(losers));
+        int index = all.indexOf(b);
+        if (index == -1){
+            // if entry does not exists, create new
+            int newindex = all.indexOf(null);
+            if (newindex >= 0 && newindex < 2) {
+                winners[newindex] = b;
+                b.getBackground().setColorFilter(0xFF00FF00, PorterDuff.Mode.MULTIPLY);
+            }
+            else if (newindex >= 2 && newindex < 4) {
+                losers[newindex-2] = b;
+                b.getBackground().setColorFilter(0xFFFF0000, PorterDuff.Mode.MULTIPLY);
+            }
         }
-        else if (winners[1] == b){
-            winners[1] = null;
-            b.getBackground().clearColorFilter();
-
-        }
-        else if (losers[0] == b){
-            losers[0] = null;
-            b.getBackground().clearColorFilter();
-
-        }
-        else if (losers[1] == b){
-            losers[1] = null;
-            b.getBackground().clearColorFilter();
-        }
-
-
-        else if (winners[0] == null){
-            winners[0] = b;
-            b.getBackground().setColorFilter(0xFF00FF00, PorterDuff.Mode.MULTIPLY);
-        }
-        else if (winners[1] == null){
-            winners[1] = b;
-            b.getBackground().setColorFilter(0xFF00FF00, PorterDuff.Mode.MULTIPLY);
-        }
-        else if (losers[0] == null){
-            losers[0] = b;
-            b.getBackground().setColorFilter(0xFFFF0000, PorterDuff.Mode.MULTIPLY);
-        }
-        else if (losers[1] == null){
-            losers[1] = b;
-            b.getBackground().setColorFilter(0xFFFF0000, PorterDuff.Mode.MULTIPLY);
+        else {
+            // if entry does already exists, clear entry
+            if (index >= 0 && index < 2) {
+                winners[index] = null;
+                b.getBackground().clearColorFilter();
+            }
+            else if (index >= 2 && index < 4) {
+                losers[index-2] = null;
+                b.getBackground().clearColorFilter();
+            }
         }
 
         if (winners[0] != null && winners[1] != null && losers[0] != null && losers[1] != null){
