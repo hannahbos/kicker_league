@@ -1,9 +1,7 @@
 package de.fz_juelich.inm.kicker.kicker;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
@@ -62,7 +60,7 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
                     .commit();
         }
         queue = Volley.newRequestQueue(this);
-        buttonPlayerMap = new HashMap<Button, Player>();
+        buttonPlayerMap = new HashMap<>();
 
     }
 
@@ -207,8 +205,7 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_kicker_insert, container, false);
-            return rootView;
+            return inflater.inflate(R.layout.fragment_kicker_insert, container, false);
         }
     }
 
@@ -217,7 +214,7 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
         Log.i("blub", b.getText().toString());
 
         // create new list with winners AND losers to simplify search
-        List<Button> all = new ArrayList<Button>();
+        List<Button> all = new ArrayList<>();
         all.addAll(Arrays.asList(winners));
         all.addAll(Arrays.asList(losers));
         int index = all.indexOf(b);
