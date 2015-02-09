@@ -154,6 +154,8 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        Log.i("menuitem", String.valueOf(id));
+
         //noinspection SimplifiableIfStatement
         if (id == R.id.addplayer_menu) {
             Log.i("menu", "add player");
@@ -188,6 +190,10 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
             });
 
             builder.show();
+            return true;
+        }
+        else if (id == R.id.refresh_menu) {
+            refresh();
             return true;
         }
 

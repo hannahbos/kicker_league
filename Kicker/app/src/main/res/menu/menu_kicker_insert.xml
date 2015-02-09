@@ -3,5 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools" tools:context=".KickerInsert">
     <item android:id="@+id/addplayer_menu" android:title="@string/addplayer_menu"
         android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/refresh_menu" android:title="@string/refresh_menu"
         android:orderInCategory="100" app:showAsAction="never" />
 </menu>
