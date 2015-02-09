@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -215,37 +216,39 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
 
         if (b.equals(winners[0])){
             winners[0] = null;
-            b.setBackgroundColor(Color.LTGRAY);
+            b.getBackground().clearColorFilter();
         }
         else if (winners[1] == b){
             winners[1] = null;
-            b.setBackgroundColor(Color.LTGRAY);
+            b.getBackground().clearColorFilter();
+
         }
         else if (losers[0] == b){
             losers[0] = null;
-            b.setBackgroundColor(Color.LTGRAY);
+            b.getBackground().clearColorFilter();
+
         }
         else if (losers[1] == b){
             losers[1] = null;
-            b.setBackgroundColor(Color.LTGRAY);
+            b.getBackground().clearColorFilter();
         }
 
 
         else if (winners[0] == null){
             winners[0] = b;
-            b.setBackgroundColor(Color.GREEN);
+            b.getBackground().setColorFilter(0xFF00FF00, PorterDuff.Mode.MULTIPLY);
         }
         else if (winners[1] == null){
             winners[1] = b;
-            b.setBackgroundColor(Color.GREEN);
+            b.getBackground().setColorFilter(0xFF00FF00, PorterDuff.Mode.MULTIPLY);
         }
         else if (losers[0] == null){
             losers[0] = b;
-            b.setBackgroundColor(Color.RED);
+            b.getBackground().setColorFilter(0xFFFF0000, PorterDuff.Mode.MULTIPLY);
         }
         else if (losers[1] == null){
             losers[1] = b;
-            b.setBackgroundColor(Color.RED);
+            b.getBackground().setColorFilter(0xFFFF0000, PorterDuff.Mode.MULTIPLY);
         }
 
         if (winners[0] != null && winners[1] != null && losers[0] != null && losers[1] != null){
