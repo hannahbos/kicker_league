@@ -155,7 +155,7 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.addplayer_menu) {
             Log.i("menu", "add player");
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Add new player");
