@@ -27,7 +27,6 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.*;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -39,8 +38,7 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
     Player[] players;
     Button[] nameButtons;
 
-    Button[] winners = new Button[2];
-    Button[] losers = new Button[2];
+    List<Button> all = Arrays.asList(new Button[4]);
 
     ImageButton plus;
 
@@ -78,8 +76,7 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
         table.removeAllViews();
         nameButtons = null;
         players = null;
-        winners = new Button[2];
-        losers = new Button[2];
+        all = Arrays.asList(new Button[4]);
         plus.setEnabled(false);
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, "http://dper.de:9898/getplayers/", new Response.Listener<String>() {
@@ -217,38 +214,36 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
 
     public void onClick(View v){
         Button b = (Button) v;
-        Log.i("blub", b.getText().toString());
+        Log.i("player button", b.getText().toString());
 
         // create new list with winners AND losers to simplify search
-        List<Button> all = new ArrayList<>();
-        all.addAll(Arrays.asList(winners));
-        all.addAll(Arrays.asList(losers));
         int index = all.indexOf(b);
         if (index == -1){
             // if entry does not exists, create new
             int newindex = all.indexOf(null);
-            if (newindex >= 0 && newindex < 2) {
-                winners[newindex] = b;
-                b.getBackground().setColorFilter(0xFF00FF00, PorterDuff.Mode.MULTIPLY);
-            }
-            else if (newindex >= 2 && newindex < 4) {
-                losers[newindex-2] = b;
-                b.getBackground().setColorFilter(0xFFFF0000, PorterDuff.Mode.MULTIPLY);
+            if (newindex != -1) {
+                // if a slot is open
+                all.set(newindex, b);
+                if (newindex >= 0 && newindex < 2) {
+                    b.getBackground().setColorFilter(0xFF00FF00, PorterDuff.Mode.MULTIPLY);
+                }
+                else if (newindex >= 2 && newindex < 4) {
+                    b.getBackground().setColorFilter(0xFFFF0000, PorterDuff.Mode.MULTIPLY);
+                }
             }
         }
         else {
             // if entry does already exists, clear entry
+            all.set(index, null);
             if (index >= 0 && index < 2) {
-                winners[index] = null;
                 b.getBackground().clearColorFilter();
             }
             else if (index >= 2 && index < 4) {
-                losers[index-2] = null;
                 b.getBackground().clearColorFilter();
             }
         }
 
-        if (winners[0] != null && winners[1] != null && losers[0] != null && losers[1] != null){
+        if (!all.contains(null)) {
             plus.setEnabled(true);
         }
         else{
@@ -260,8 +255,9 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
     public void addGame(View v){
         Log.i("bla", "ADD GAME");
         String url = "http://dper.de:9898/addgame/";
-        String request_url = url + buttonPlayerMap.get(winners[0]).id + "/" + buttonPlayerMap.get(winners[1]).id +
-                                "/" + buttonPlayerMap.get(losers[0]).id + "/" + buttonPlayerMap.get(losers[1]).id + "/" + "0"; //TODO transmit real value for the score of the game instead of 0
+        //TODO transmit real value for the score of the game instead of 0
+        String request_url = url + buttonPlayerMap.get(all.get(0)).id + "/" + buttonPlayerMap.get(all.get(1)).id +
+                                "/" + buttonPlayerMap.get(all.get(2)).id + "/" + buttonPlayerMap.get(all.get(3)).id + "/" + "6" + "/" + "3";
 
 
         Log.i("url", request_url);
