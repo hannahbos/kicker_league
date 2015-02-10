@@ -4,5 +4,8 @@
     <string name="app_name">Kicker</string>
     <string name="addplayer_menu">Add Player</string>
     <string name="refresh_menu">Refresh</string>
+    <string name="title_activity_enter_score">Enter score</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
 
 </resources>

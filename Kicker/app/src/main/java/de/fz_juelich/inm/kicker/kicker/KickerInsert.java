@@ -2,6 +2,7 @@ package de.fz_juelich.inm.kicker.kicker;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
@@ -46,10 +47,9 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
 
     HashMap<Button, Player> buttonPlayerMap;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.i("KickerInset", "OnCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_kicker_insert);
         if (savedInstanceState == null) {
@@ -59,7 +59,6 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
         }
         queue = Volley.newRequestQueue(this);
         buttonPlayerMap = new HashMap<>();
-
     }
 
     @Override
@@ -69,7 +68,11 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
         table = (TableLayout) findViewById(R.id.table);
         plus = (ImageButton) findViewById(R.id.plus);
         refresh();
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     void refresh(){
@@ -225,10 +228,10 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
                 // if a slot is open
                 all.set(newindex, b);
                 if (newindex >= 0 && newindex < 2) {
-                    b.getBackground().setColorFilter(0xFF00FF00, PorterDuff.Mode.MULTIPLY);
+                    b.getBackground().setColorFilter(0xA0FF0000, PorterDuff.Mode.MULTIPLY);
                 }
                 else if (newindex >= 2 && newindex < 4) {
-                    b.getBackground().setColorFilter(0xFFFF0000, PorterDuff.Mode.MULTIPLY);
+                    b.getBackground().setColorFilter(0xA0000000, PorterDuff.Mode.MULTIPLY);
                 }
             }
         }
@@ -252,13 +255,11 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
 
     }
 
-    public void addGame(View v){
-        Log.i("bla", "ADD GAME");
-        String url = "http://dper.de:9898/addgame/";
-        //TODO transmit real value for the score of the game instead of 0
+    public void startGame(View v){
+        Log.i("startGame", "starting game");
+        String url = "http://dper.de:9898/startgame/";
         String request_url = url + buttonPlayerMap.get(all.get(0)).id + "/" + buttonPlayerMap.get(all.get(1)).id +
-                                "/" + buttonPlayerMap.get(all.get(2)).id + "/" + buttonPlayerMap.get(all.get(3)).id + "/" + "6" + "/" + "3";
-
+                                "/" + buttonPlayerMap.get(all.get(2)).id + "/" + buttonPlayerMap.get(all.get(3)).id;
 
         Log.i("url", request_url);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, request_url, new Response.Listener<String>() {
@@ -276,8 +277,8 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
         });
         queue.add(stringRequest);
 
-        refresh();
-
+        Intent intent = new Intent(this, EnterScoreActivity.class);
+        startActivity(intent);
     }
 
 }

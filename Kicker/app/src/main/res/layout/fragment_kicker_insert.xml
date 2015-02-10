@@ -31,12 +31,12 @@
             android:layout_height="wrap_content"
             android:id="@+id/plus"
             android:src="@android:drawable/ic_input_add"
-            android:onClick="addGame"
+            android:onClick="startGame"
             android:layout_toRightOf="@+id/scrollView"
             android:layout_alignParentBottom="true"
-            android:layout_weight="0.01"
             android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
+            android:layout_alignParentEnd="true"
+            android:layout_weight="0" />
 
     </LinearLayout>
 
