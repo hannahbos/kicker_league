@@ -47,6 +47,7 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
 
     HashMap<Button, Player> buttonPlayerMap;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.i("KickerInset", "OnCreate");
