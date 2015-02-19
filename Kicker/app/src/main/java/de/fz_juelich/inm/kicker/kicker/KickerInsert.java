@@ -94,6 +94,7 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
                         JSONObject oPlayer = aPlayers.getJSONObject(i);
                         players[i] = new Player(oPlayer.getInt("id"), oPlayer.getString("name"), oPlayer.getInt("score"));
                     }
+                    Arrays.sort(players);
                     createTable();
                 }
                 catch(JSONException e){
@@ -118,23 +119,25 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
 
         for (int i = 0; i < nameButtons.length; i++){
             nameButtons[i] = new Button(this);
-            nameButtons[i].setMinimumWidth(table.getWidth()/2);
-            nameButtons[i].setMinimumHeight(table.getWidth()/2);
+            nameButtons[i].setMinimumWidth(table.getWidth()/3);
+            nameButtons[i].setMinimumHeight(table.getWidth()/3);
             nameButtons[i].setOnClickListener(this);
-            nameButtons[i].setText(players[i].name + " " + players[i].score);
+            nameButtons[i].setText(players[i].name + "\n" + players[i].score);
             buttonPlayerMap.put(nameButtons[i], players[i]);
-            if (i % 2 == 0){
+            if (i % 3 == 0){
                 row = new TableRow(this);
                 row.setMinimumWidth(table.getWidth());
                 row.addView(nameButtons[i]);
             }
             else{
                 row.addView(nameButtons[i]);
-                table.addView(row);
+                if (i % 3 == 2){
+                    table.addView(row);
+                }
             }
         }
 
-        if (nameButtons.length % 2 == 1){
+        if (nameButtons.length % 3 != 0){
             table.addView(row);
         }
 
