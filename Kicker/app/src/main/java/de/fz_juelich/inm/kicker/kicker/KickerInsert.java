@@ -122,6 +122,13 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
             nameButtons[i].setMinimumWidth(table.getWidth()/3);
             nameButtons[i].setMinimumHeight(table.getWidth()/3);
             nameButtons[i].setOnClickListener(this);
+            nameButtons[i].setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    deletePlayer(buttonPlayerMap.get(((Button) v)).id);
+                    return false;
+                }
+            });
             nameButtons[i].setText(players[i].name + "\n" + players[i].score);
             buttonPlayerMap.put(nameButtons[i], players[i]);
             if (i % 3 == 0){
@@ -179,7 +186,7 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
                         @Override
                         public void onResponse(String response) {
                             Log.i("request", "response: " + response);
-
+                            refresh();
 
                         }
                     }, new Response.ErrorListener() {
@@ -189,7 +196,6 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
                         }
                     });
                     queue.add(stringRequest);
-                    refresh();
                 }
             });
 
@@ -283,6 +289,39 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
 
         Intent intent = new Intent(this, EnterScoreActivity.class);
         startActivity(intent);
+    }
+
+    public void deletePlayer(final int player_id){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Delete this player?");
+        builder.setPositiveButton("Hell yeah!", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String request_url = "http://dper.de:9898/deleteplayer/" + player_id;
+                Log.i("url", request_url);
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, request_url, new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.i("request", "response: " + response);
+                        refresh();
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.i("request", "something went wrong! " + error.getMessage());
+                    }
+                });
+                queue.add(stringRequest);
+            }
+        });
+        builder.setNegativeButton("Nope.", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
 }
