@@ -1,9 +1,7 @@
 package de.fz_juelich.inm.kicker.kicker;
 
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.LayerDrawable;
-import android.media.Rating;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.RatingBar;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -58,7 +57,6 @@ public class EnterScoreActivity extends ActionBarActivity {
         if (id == R.id.action_settings) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -67,24 +65,28 @@ public class EnterScoreActivity extends ActionBarActivity {
         String url = "http://dper.de:9898/endgame/";
         RatingBar score_red = (RatingBar) findViewById(R.id.score_red);
         RatingBar score_black = (RatingBar) findViewById(R.id.score_black);
-        String request_url = url + String.valueOf(score_red.getRating()) + "/" + String.valueOf(score_black.getRating());
+        if ((score_red.getRating() == 6) ^ (score_black.getRating() == 6)) {
+            String request_url = url + String.valueOf(score_red.getRating()) + "/" + String.valueOf(score_black.getRating());
 
-        Log.i("url", request_url);
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, request_url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                Log.i("request", "response: " + response);
-
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.i("request", "something went wrong! " + error.getMessage());
-            }
-        });
-        queue.add(stringRequest);
-        finish();
+            Log.i("url", request_url);
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, request_url, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    Log.i("request", "response: " + response);
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.i("request", "something went wrong! " + error.getMessage());
+                }
+            });
+            queue.add(stringRequest);
+            finish();
+        }
+        else{
+            Toast error = Toast.makeText(this, "Invalid score, dummy!", Toast.LENGTH_SHORT);
+            error.show();
+        }
     }
 
 }
