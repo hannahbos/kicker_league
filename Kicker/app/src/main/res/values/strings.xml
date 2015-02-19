@@ -7,5 +7,6 @@
     <string name="title_activity_enter_score">Enter score</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="endGame_red1"></string>
 
 </resources>

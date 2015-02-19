@@ -12,16 +12,80 @@
         android:layout_height="fill_parent"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:weightSum="1">
+        android:weightSum="1"
+        android:gravity="bottom">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:layout_weight="0.2">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="..."
+                android:id="@+id/player_red0"
+                android:layout_gravity="center_horizontal"
+                android:layout_column="5"
+                android:phoneNumber="false"
+                android:password="false"
+                android:layout_weight="1"
+                android:gravity="center_horizontal" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="..."
+                android:id="@+id/player_red1"
+                android:layout_column="8"
+                android:layout_weight="1"
+                android:gravity="center_horizontal" />
+
+        </LinearLayout>
 
         <RatingBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/score_red"
             android:numStars="6"
-            android:layout_gravity="center_horizontal"
             android:rating="0"
-            android:stepSize="1" />
+            android:stepSize="1"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="30dp"
+            android:layout_weight="0.2" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:layout_weight="0.2">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="..."
+                android:id="@+id/player_black0"
+                android:layout_column="5"
+                android:layout_weight="1"
+                android:gravity="center_horizontal" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="..."
+                android:id="@+id/player_black1"
+                android:layout_column="8"
+                android:layout_weight="1"
+                android:gravity="center_horizontal" />
+        </LinearLayout>
 
         <RatingBar
             android:layout_width="wrap_content"
@@ -30,7 +94,9 @@
             android:numStars="6"
             android:layout_gravity="center_horizontal"
             android:rating="0"
-            android:stepSize="1" />
+            android:stepSize="1"
+            android:layout_marginBottom="30dp"
+            android:layout_weight="0.2" />
 
         <ImageButton
             android:layout_width="fill_parent"
@@ -41,4 +107,5 @@
             android:src="@android:drawable/ic_input_add" />
 
     </LinearLayout>
+
 </RelativeLayout>

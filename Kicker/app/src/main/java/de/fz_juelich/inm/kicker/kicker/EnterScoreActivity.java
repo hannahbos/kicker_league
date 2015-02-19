@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.RatingBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -18,12 +19,20 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 
 public class EnterScoreActivity extends ActionBarActivity {
 
     RequestQueue queue;
     RatingBar score_red;
     RatingBar score_black;
+    TextView player_red0;
+    TextView player_red1;
+    TextView player_black0;
+    TextView player_black1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +45,39 @@ public class EnterScoreActivity extends ActionBarActivity {
         score_black = (RatingBar) findViewById(R.id.score_black);
         LayerDrawable stars_black = (LayerDrawable) score_black.getProgressDrawable();
         stars_black.getDrawable(2).setColorFilter(0xA0000000, PorterDuff.Mode.MULTIPLY);
+        player_red0 = (TextView) findViewById(R.id.player_red0);
+        player_red1 = (TextView) findViewById(R.id.player_red1);
+        player_black0 = (TextView) findViewById(R.id.player_black0);
+        player_black1 = (TextView) findViewById(R.id.player_black1);
+
+        String request_url = "http://dper.de:9898/getcurrentgame/";
+        Log.i("url", request_url);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, request_url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.i("request", "response: " + response);
+                try {
+                    JSONObject oPlayers = new JSONObject(response);
+                    player_red0.setText(oPlayers.getString("red0_name"));
+                    player_red1.setText(oPlayers.getString("red1_name"));
+                    player_red0.setBackgroundColor(0xA0FF0000);
+                    player_red1.setBackgroundColor(0xA0FF0000);
+                    player_black0.setText(oPlayers.getString("black0_name"));
+                    player_black1.setText(oPlayers.getString("black1_name"));
+                    player_black0.setBackgroundColor(0xA0000000);
+                    player_black1.setBackgroundColor(0xA0000000);
+                }
+                catch(JSONException e) {
+
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.i("request", "something went wrong! " + error.getMessage());
+            }
+        });
+        queue.add(stringRequest);
     }
 
 
