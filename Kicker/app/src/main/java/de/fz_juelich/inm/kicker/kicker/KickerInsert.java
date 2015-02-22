@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TableLayout;
 import android.widget.TableRow;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -28,6 +29,7 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.*;
 
+import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -89,7 +91,7 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
         StringRequest stringRequest = new StringRequest(Request.Method.GET, "http://dper.de:9898/getplayers/", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.i("request", "response: " + response);
+                Log.i("refresh_request", "response: " + response);
                 try {
                     JSONArray aPlayers = new JSONArray(response);
                     players = new Player[aPlayers.length()];
@@ -101,18 +103,26 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
                     createTable();
                 }
                 catch(JSONException e){
-
+                    Log.i("refresh_json", "JSONException when getting players.");
                 }
 
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.i("request", "something went wrong! " + error.getMessage());
+                Log.i("refresh_request", "volley error: " + error.getMessage());
+                CharSequence errortext;
+                if (error.getCause() instanceof UnknownHostException) {
+                    errortext = "Connection error.";
+                }
+                else{
+                    errortext = "Unknown error.";
+                }
+                Toast errortoast = Toast.makeText(getApplicationContext(), errortext, Toast.LENGTH_SHORT);
+                errortoast.show();
             }
         });
         queue.add(stringRequest);
-
     }
 
     void createTable(){
@@ -184,18 +194,26 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
                     String url = "http://dper.de:9898/addplayer/";
                     String request_url = url + name.getText();
 
-                    Log.i("url", request_url);
+                    Log.i("addplayer_menu", "url: " + request_url);
                     StringRequest stringRequest = new StringRequest(Request.Method.GET, request_url, new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
-                            Log.i("request", "response: " + response);
+                            Log.i("addplayer_request", "response: " + response);
                             refresh();
-
                         }
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            Log.i("request", "something went wrong! " + error.getMessage());
+                            Log.i("addplayer_request", "volley error: " + error.getMessage());
+                            CharSequence errortext;
+                            if (error.getCause() instanceof UnknownHostException) {
+                                errortext = "Connection error.";
+                            }
+                            else{
+                                errortext = "Unknown error.";
+                            }
+                            Toast errortoast = Toast.makeText(getApplicationContext(), errortext, Toast.LENGTH_SHORT);
+                            errortoast.show();
                         }
                     });
                     queue.add(stringRequest);
@@ -273,25 +291,30 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
         String url = "http://dper.de:9898/startgame/";
         String request_url = url + buttonPlayerMap.get(all.get(0)).id + "/" + buttonPlayerMap.get(all.get(1)).id +
                                 "/" + buttonPlayerMap.get(all.get(2)).id + "/" + buttonPlayerMap.get(all.get(3)).id;
-
-        Log.i("url", request_url);
+        Log.i("startGame", "url: " + request_url);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, request_url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.i("request", "response: " + response);
-
-
+                Log.i("startGame_request", "response: " + response);
+                Intent intent = new Intent(getApplicationContext(), EnterScoreActivity.class);
+                startActivity(intent);
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.i("request", "something went wrong! " + error.getMessage());
+                Log.i("startGame_request", "volley error: " + error.getMessage());
+                CharSequence errortext;
+                if (error.getCause() instanceof UnknownHostException) {
+                    errortext = "Connection error.";
+                }
+                else{
+                    errortext = "Unknown error.";
+                }
+                Toast errortoast = Toast.makeText(getApplicationContext(), errortext, Toast.LENGTH_SHORT);
+                errortoast.show();
             }
         });
         queue.add(stringRequest);
-
-        Intent intent = new Intent(this, EnterScoreActivity.class);
-        startActivity(intent);
     }
 
     public void deletePlayer(final int player_id){
@@ -301,17 +324,26 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String request_url = "http://dper.de:9898/deleteplayer/" + player_id;
-                Log.i("url", request_url);
+                Log.i("deletePlayer", "url: " + request_url);
                 StringRequest stringRequest = new StringRequest(Request.Method.GET, request_url, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.i("request", "response: " + response);
+                        Log.i("deletePlayer_request", "response: " + response);
                         refresh();
                     }
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.i("request", "something went wrong! " + error.getMessage());
+                        Log.i("deletePlayer_request", "volley error: " + error.getMessage());
+                        CharSequence errortext;
+                        if (error.getCause() instanceof UnknownHostException) {
+                            errortext = "Connection error.";
+                        }
+                        else{
+                            errortext = "Unknown error.";
+                        }
+                        Toast errortoast = Toast.makeText(getApplicationContext(), errortext, Toast.LENGTH_SHORT);
+                        errortoast.show();
                     }
                 });
                 queue.add(stringRequest);

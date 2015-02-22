@@ -53,11 +53,11 @@ public class EnterScoreActivity extends ActionBarActivity {
         player_black1 = (TextView) findViewById(R.id.player_black1);
 
         String request_url = "http://dper.de:9898/getcurrentgame/";
-        Log.i("url", request_url);
+        Log.i("onCreate", "url: " + request_url);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, request_url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.i("request", "response: " + response);
+                Log.i("onCreate_request", "response: " + response);
                 try {
                     JSONObject oPlayers = new JSONObject(response);
                     player_red0.setText(oPlayers.getString("red0_name"));
@@ -70,13 +70,22 @@ public class EnterScoreActivity extends ActionBarActivity {
                     player_black1.setBackgroundColor(0xA0000000);
                 }
                 catch(JSONException e) {
-
+                    Log.i("getcurrentgame_request", "JSONException when getting current game.");
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.i("request", "something went wrong! " + error.getMessage());
+                Log.i("onCreate_request", "volley error: " + error.getMessage());
+                CharSequence errortext;
+                if (error.getCause() instanceof UnknownHostException) {
+                    errortext = "Connection error.";
+                }
+                else{
+                    errortext = "Unknown error.";
+                }
+                Toast errortoast = Toast.makeText(getApplicationContext(), errortext, Toast.LENGTH_SHORT);
+                errortoast.show();
             }
         });
         queue.add(stringRequest);
