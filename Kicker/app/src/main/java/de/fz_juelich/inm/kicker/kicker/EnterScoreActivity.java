@@ -22,6 +22,8 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.UnknownHostException;
+
 
 public class EnterScoreActivity extends ActionBarActivity {
 
@@ -109,25 +111,39 @@ public class EnterScoreActivity extends ActionBarActivity {
         RatingBar score_black = (RatingBar) findViewById(R.id.score_black);
         if ((score_red.getRating() == 6) ^ (score_black.getRating() == 6)) {
             String request_url = url + String.valueOf(score_red.getRating()) + "/" + String.valueOf(score_black.getRating());
-
-            Log.i("url", request_url);
+            Log.i("endGame", "url: " + request_url);
             StringRequest stringRequest = new StringRequest(Request.Method.GET, request_url, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
-                    Log.i("request", "response: " + response);
+                    Log.i("endGame_request", "response: " + response);
+                    if (Integer.parseInt(response) == 0){
+                        finish();
+                    }
+                    else{
+                        Toast errortoast = Toast.makeText(getApplicationContext(), "Unknown response.", Toast.LENGTH_SHORT);
+                        errortoast.show();
+                    }
                 }
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Log.i("request", "something went wrong! " + error.getMessage());
+                    CharSequence errortext;
+                    Log.i("endGame_request", "volley error: " + error.getMessage());
+                    if (error.getCause() instanceof UnknownHostException) {
+                        errortext = "Connection error.";
+                    }
+                    else{
+                        errortext = "Unknown error.";
+                    }
+                    Toast errortoast = Toast.makeText(getApplicationContext(), errortext, Toast.LENGTH_SHORT);
+                    errortoast.show();
                 }
             });
             queue.add(stringRequest);
-            finish();
         }
         else{
-            Toast error = Toast.makeText(this, "Invalid score, dummy!", Toast.LENGTH_SHORT);
-            error.show();
+            Toast errortoast = Toast.makeText(this, "Invalid score, dummy!", Toast.LENGTH_SHORT);
+            errortoast.show();
         }
     }
 
