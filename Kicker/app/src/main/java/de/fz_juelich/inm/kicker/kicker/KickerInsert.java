@@ -58,6 +58,9 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
                     .add(R.id.container, new PlaceholderFragment())
                     .commit();
         }
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setLogo(R.drawable.fun_icon);
+        getSupportActionBar().setDisplayUseLogoEnabled(true);
         queue = Volley.newRequestQueue(this);
         buttonPlayerMap = new HashMap<>();
     }
