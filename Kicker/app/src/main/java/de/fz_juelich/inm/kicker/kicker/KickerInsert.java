@@ -40,6 +40,7 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
     TableLayout table;
     Player[] players;
     Button[] nameButtons;
+    Menu mainmenu;
 
     List<Button> all = Arrays.asList(new Button[4]);
 
@@ -123,6 +124,39 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
             }
         });
         queue.add(stringRequest);
+
+        String request_url = "http://dper.de:9898/getcurrentgame/";
+        Log.i("refresh", "url: " + request_url);
+        StringRequest stringRequest_currentgame = new StringRequest(Request.Method.GET, request_url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.i("refresh_getcurrentgame_request", "response: " + response);
+                // TODO the webservice should return -1 if no game is running
+                if (response != "-1") {
+                    mainmenu.getItem(0).setEnabled(true);
+                    mainmenu.getItem(0).setVisible(true);
+                }
+                else {
+                    mainmenu.getItem(0).setEnabled(false);
+                    mainmenu.getItem(0).setVisible(false);
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.i("refresh_getcurrentgame_request", "volley error: " + error.getMessage());
+                CharSequence errortext;
+                if (error.getCause() instanceof UnknownHostException) {
+                    errortext = "Connection error.";
+                }
+                else{
+                    errortext = "Unknown error.";
+                }
+                Toast errortoast = Toast.makeText(getApplicationContext(), errortext, Toast.LENGTH_SHORT);
+                errortoast.show();
+            }
+        });
+        queue.add(stringRequest_currentgame);
     }
 
     void createTable(){
@@ -168,6 +202,10 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_kicker_insert, menu);
+        mainmenu = menu;
+        // disable button which shows current game
+        mainmenu.getItem(0).setEnabled(false);
+        mainmenu.getItem(0).setVisible(false);
         return true;
     }
 
@@ -225,6 +263,11 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
         }
         else if (id == R.id.refresh_menu) {
             refresh();
+            return true;
+        }
+        else if (id == R.id.currentgame_menu) {
+            Intent intent = new Intent(getApplicationContext(), EnterScoreActivity.class);
+            startActivity(intent);
             return true;
         }
 
@@ -296,6 +339,10 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
             @Override
             public void onResponse(String response) {
                 Log.i("startGame_request", "response: " + response);
+                if (Integer.parseInt(response) == -1){
+                    Toast errortoast = Toast.makeText(getApplicationContext(), "Game already running.", Toast.LENGTH_LONG);
+                    errortoast.show();
+                }
                 Intent intent = new Intent(getApplicationContext(), EnterScoreActivity.class);
                 startActivity(intent);
             }
