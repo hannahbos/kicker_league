@@ -131,14 +131,13 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
             @Override
             public void onResponse(String response) {
                 Log.i("refresh_getcurrentgame_request", "response: " + response);
-                // TODO the webservice should return -1 if no game is running
-                if (response != "-1") {
-                    mainmenu.getItem(0).setEnabled(true);
-                    mainmenu.getItem(0).setVisible(true);
-                }
-                else {
+                if (response.contentEquals("-1")) {
                     mainmenu.getItem(0).setEnabled(false);
                     mainmenu.getItem(0).setVisible(false);
+                }
+                else {
+                    mainmenu.getItem(0).setEnabled(true);
+                    mainmenu.getItem(0).setVisible(true);
                 }
             }
         }, new Response.ErrorListener() {
