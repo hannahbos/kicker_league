@@ -269,6 +269,39 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
             startActivity(intent);
             return true;
         }
+        else if (id == R.id.restartgame_menu) {
+            Log.i("restartgame_menu", "restarting game");
+            String url = "http://dper.de:9898/restartgame/";
+            Log.i("startGame", "url: " + url);
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    Log.i("restartgame_menu_request", "response: " + response);
+                    if (Integer.parseInt(response) == -1){
+                        Toast errortoast = Toast.makeText(getApplicationContext(), "Game already running.", Toast.LENGTH_LONG);
+                        errortoast.show();
+                    }
+                    Intent intent = new Intent(getApplicationContext(), EnterScoreActivity.class);
+                    startActivity(intent);
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.i("restartgame_menu_request", "volley error: " + error.getMessage());
+                    CharSequence errortext;
+                    if (error.getCause() instanceof UnknownHostException) {
+                        errortext = "Connection error.";
+                    }
+                    else{
+                        errortext = "Unknown error.";
+                    }
+                    Toast errortoast = Toast.makeText(getApplicationContext(), errortext, Toast.LENGTH_SHORT);
+                    errortoast.show();
+                }
+            });
+            queue.add(stringRequest);
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
     }

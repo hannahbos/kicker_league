@@ -5,6 +5,7 @@
     <string name="addplayer_menu">Add Player</string>
     <string name="refresh_menu">Refresh</string>
     <string name="currentgame_menu">Current game</string>
+    <string name="restartgame_menu">Revanche</string>
     <string name="title_activity_enter_score">Enter score</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
