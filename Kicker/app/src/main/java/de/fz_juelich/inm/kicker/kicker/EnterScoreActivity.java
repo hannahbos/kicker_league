@@ -107,8 +107,34 @@ public class EnterScoreActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        Log.i("menuitem", String.valueOf(id));
+
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.cancelgame_menu) {
+            String request_url = "http://dper.de:9898/cancelcurrentgame/";
+            Log.i("onOptionsItemSelected", "url: " + request_url);
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, request_url, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    Log.i("onOptionsItemSelected_request", "response: " + response);
+                    finish();
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.i("onOptionsItemSelected_request", "volley error: " + error.getMessage());
+                    CharSequence errortext;
+                    if (error.getCause() instanceof UnknownHostException) {
+                        errortext = "Connection error.";
+                    }
+                    else{
+                        errortext = "Unknown error.";
+                    }
+                    Toast errortoast = Toast.makeText(getApplicationContext(), errortext, Toast.LENGTH_SHORT);
+                    errortoast.show();
+                }
+            });
+            queue.add(stringRequest);
             return true;
         }
         return super.onOptionsItemSelected(item);

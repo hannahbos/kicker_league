@@ -2,6 +2,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="de.fz_juelich.inm.kicker.kicker.EnterScoreActivity">
-    <item android:id="@+id/action_settings" android:title="@string/action_settings"
-        android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/cancelgame_menu" android:title="@string/cancelgame_menu"
+        android:orderInCategory="100" app:showAsAction="ifRoom"
+        android:icon="@android:drawable/ic_delete" />
+    />
 </menu>
