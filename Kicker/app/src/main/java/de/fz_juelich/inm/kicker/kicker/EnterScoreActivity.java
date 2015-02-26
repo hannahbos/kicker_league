@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.media.MediaPlayer;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -154,6 +155,12 @@ public class EnterScoreActivity extends ActionBarActivity {
             Toast errortoast = Toast.makeText(this, "Invalid score, dummy!", Toast.LENGTH_SHORT);
             errortoast.show();
         }
+
+	if ((score_red.getRating()==6 & score_black.getRating()==0) ^ (score_red.getRating()==0 & score_black.getRating()==6)){
+	    MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.bazinga);
+	    mp.start();
+	}
+
     }
 
 }
