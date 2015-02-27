@@ -123,7 +123,7 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
                 errortoast.show();
             }
         });
-        queue.add(stringRequest);
+
 
         String request_url = "http://dper.de:9898/getcurrentgame/";
         Log.i("refresh", "url: " + request_url);
@@ -155,7 +155,9 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
                 errortoast.show();
             }
         });
+        queue.getCache().clear();
         queue.add(stringRequest_currentgame);
+        queue.add(stringRequest);
     }
 
     void createTable(){
