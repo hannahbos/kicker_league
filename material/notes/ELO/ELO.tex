@@ -1,0 +1,93 @@
+\documentclass[a4paper,10pt]{article}
+
+\usepackage[pdftex]{graphicx}         % fuer das Einbinden von Grafiken
+
+\title{ELO numbers for random teams}
+\author{Maximilian Schmidt}
+\begin{document}
+% \begin{abstract}
+% This document describes some considerations and suggestion on how to extend the ELO ranking system to games with random teams, such as Kicker.
+% \end{abstract}
+\maketitle
+
+\tableofcontents
+
+\section{Calculation of the ELO number}
+Say we have 4 players $p_i, i \in \{a,b,c,d \}$ with individual ELO numbers $x_i$ which form two teams $t_0 = [p_a, p_b], t_1 = [p_c,p_d]$ with team strenghts $X_1,X_0$.  Then the expectation valye of the game outcome reads
+\begin{equation}
+  E = \frac{1}{1+10^{\frac{(X_1-X_0)}{400}}}\, ,
+\end{equation}
+where 400 is a commonly chosen number in chess (In table tennis, 200 was chosen as a value.). E represents the average outcome of the game after a sufficient amount of samples, where ``1'' correponds to a victory of team 0 and ``0'' a victory of team 1.
+Then, the team strengths are updated as follows:
+\begin{eqnarray}
+  X_0^{\prime} &= X_0 + k \cdot \left(S - E \right) \\
+  X_1^{\prime} &= X_1 + k \cdot \left(E-S \right)
+\label{eq:update}
+\end{eqnarray}
+where $k$ is a constant which has to be chosen, in chess, $k=20$. The game thus leads to changes of team strenghts:
+\begin{equation}
+  \delta_i = X_i^{\prime} - X_i
+\end{equation}
+
+Overall, after the teams have played, the strenghts of the 4 players are updated as follows:
+\begin{eqnarray}
+  x_a^{\prime} &= x_a + \delta_0^{(a)} \\
+  x_b^{\prime} &= x_b + \delta_0^{(b)} \\
+  x_c^{\prime} &= x_c + \delta_1^{(c)} \\
+  x_d^{\prime} &= x_d + \delta_1^{(d)} 
+\end{eqnarray}
+
+\section{Geometric vs. arithmetic mean}
+Say we have 4 players $p_i, i \in \{a,b,c,d \}$ with individual ELO numbers $x_i$ which form two teams $t_0 = [p_a, p_b], t_1 = [p_c,p_d]$.
+The first question is: How to derive team strengths $X_0,X_1$ for the two teams.
+\begin{enumerate}
+\item Arithmetic mean: The simplest way would be to compute the team strengths as the arithmetic means of the indivual player strengths:
+  \begin{eqnarray}
+    X_0 &= \frac{1}{2} \left(x_a+x_b \right) \\
+    X_1 &= \frac{1}{2} \left(x_c+x_d \right) 
+  \end{eqnarray}
+\item Geometric mean: Alternatively, one could use the geometric mean.
+  \begin{eqnarray}
+    X_0 &= \sqrt{x_a \, x_b } \\
+    X_1 &= \sqrt{x_c \,x_d } 
+  \end{eqnarray}
+\end{enumerate}
+
+What is the difference between the two methods. \ref{fig:means} shows that for teams with very different individual strengths, the geometric mean is lower than the arithmetic mean while they are exactly equal for equal player strengths. One could argue for two different hypotheses:
+\begin{itemize}
+\item In a kicker team, equal players are more stronger than a team of one strong and one weak player $\Rightarrow$ Geometric mean
+\item It is more benefitial to have one strong player in the team $\Rightarrow$ Arithmetic mean.
+\end{itemize}
+
+\begin{figure}
+\includegraphics[width=0.7\linewidth]{means}
+    \caption{Comparison of geometric vs. arithmetic mean for a team of $x_a=1400$ and $x_b$ varying from 400 to 2400.}
+  \label{fig:means}
+\end{figure}
+
+
+\section{How to distribute the change of team strength among the players}
+After calculating team strengths, we can perform the update rule presented in (\ref{eq:update}) and get a certain $\delta_i$ for each team.
+The question is: How do we distribute this $\delta_i$ among the players? Two different options are possible:
+\begin{itemize}
+\item Distribute $\delta_i$ equally among the players:
+  \begin{equation}
+    \delta_i^{(j)} = \frac{1}{2} \delta_i
+  \end{equation}
+This ensures that the difference between the players' strenghts remains constant, which seems sensible because in the calculation of expectation values, it is the difference of ELO numbers which matters and if 2 players play in the same team, the result of the team game does not gives us any information on their relative strengths.
+\item On the other hand, we can expect that the players' responsabilities for the outcome of the game are not equal. Typically, you would expect that the stronger players is more influential on the outcome, i.e., if the team wins, he should gain more credit for the victory. We can provide for this by conserving not the difference of ELO strengths but their proportion, i.e. by distributing the team increase/decrease $\delta_i$ according to the individual strenghts that they brought into the team strength:
+  \begin{equation}
+    \delta_i^{(j)} = \frac{x_j}{\sum_j x_j} \delta_i
+  \end{equation}
+\end{itemize}
+
+Fig. \ref{fig:test_elo} shows the difference between the two methods. For the first option, both player always get the same change in strengths, no matter whether they are equally strong. For the 2nd option, the stronger player gets a higher increase of strength if the team wins but also a higher decrease if the team loses.
+
+\begin{figure}
+\includegraphics[width=0.7\linewidth]{test_elo}
+    \caption{Change of ind. player strengths after their team wins (top) of loses (bottom). The strenght of P1 is always 1400., while the strength of P0 varies from 1400. to 2400., i.e., he is stronger than P1.}
+  \label{fig:test_elo}
+\end{figure}
+
+
+\end{document}
