@@ -1,6 +1,6 @@
 import numpy as np
 import pylab as pl
-execfile('elo.py')
+from elo import *
 
 x = np.arange(1400.,2400.,10.)
 y = np.ones_like(x)*1400.
@@ -15,19 +15,18 @@ t1_updated_geo2 = []
 t1_updated_geo2_2 = []
 t2_updated = []
 
-result=1.
 k=20.
+scale=400.
 for t1 in zip(x,y) :
     t2 = (1400.,1400.)
-
-    d1_arith,d2_arith = update_elo_teams(t1, t2, result, k) ### arithmetic
+    d1_arith,d2_arith = update_elo_teams(t1, t2, 6.,0., k, scale, team_method='arithmetic', result_method='heaviside', dist_method='equal') ### arithmetic
     t1_updated_arith.append(d1_arith[1]-t1[1])
 
-    d1_geo,d2_geo = update_elo_teams2(t1, t2, result, k) ### geometric
+    d1_geo,d2_geo = update_elo_teams(t1, t2, 6.,0., k, scale, team_method='geometric', result_method='heaviside', dist_method='equal') ### geometric
     t1_updated_geo.append(d1_geo[1]-t1[1])
     t1_updated_geo_2.append(d1_geo[0]-t1[0])
 
-    d1_geo2,d2_geo2 = update_elo_teams3(t1, t2, result, k) ### geometric
+    d1_geo2,d2_geo2 = update_elo_teams(t1, t2, 6.,0., k, scale, team_method='geometric', result_method='heaviside', dist_method='weighted') ### geometric
     t1_updated_geo2.append(d1_geo2[1]-t1[1])
     t1_updated_geo2_2.append(d1_geo2[0]-t1[0])
 
@@ -61,14 +60,14 @@ k=20.
 for t1 in zip(x,y) :
     t2 = (1400.,1400.)
 
-    d1_arith,d2_arith = update_elo_teams(t1, t2, result, k) ### arithmetic
+    d1_arith,d2_arith = update_elo_teams(t1, t2, 0.,6., k, scale, team_method='arithmetic', result_method='heaviside', dist_method='equal') ### arithmetic
     t1_updated_arith.append(d1_arith[1]-t1[1])
 
-    d1_geo,d2_geo = update_elo_teams2(t1, t2, result, k) ### geometric
+    d1_geo,d2_geo = update_elo_teams(t1, t2, 0.,6., k, scale, team_method='geometric', result_method='heaviside', dist_method='equal') ### geometric
     t1_updated_geo.append(d1_geo[1]-t1[1])
     t1_updated_geo_2.append(d1_geo[0]-t1[0])
 
-    d1_geo2,d2_geo2 = update_elo_teams3(t1, t2, result, k) ### geometric
+    d1_geo2,d2_geo2 = update_elo_teams(t1, t2, 0.,6., k, scale, team_method='geometric', result_method='heaviside', dist_method='weighted') ### geometric
     t1_updated_geo2.append(d1_geo2[1]-t1[1])
     t1_updated_geo2_2.append(d1_geo2[0]-t1[0])
 

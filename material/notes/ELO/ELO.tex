@@ -1,6 +1,8 @@
 \documentclass[a4paper,10pt]{article}
 
+\usepackage{amsmath}
 \usepackage[pdftex]{graphicx}         % fuer das Einbinden von Grafiken
+\usepackage{fancyref}
 
 \title{ELO numbers for random teams}
 \author{Maximilian Schmidt}
@@ -15,9 +17,9 @@
 \section{Calculation of the ELO number}
 Say we have 4 players $p_i, i \in \{a,b,c,d \}$ with individual ELO numbers $x_i$ which form two teams $t_0 = [p_a, p_b], t_1 = [p_c,p_d]$ with team strenghts $X_1,X_0$.  Then the expectation valye of the game outcome reads
 \begin{equation}
-  E = \frac{1}{1+10^{\frac{(X_1-X_0)}{400}}}\, ,
+  E = \frac{1}{1+10^{\frac{(X_1-X_0)}{s}}}\, ,
 \end{equation}
-where 400 is a commonly chosen number in chess (In table tennis, 200 was chosen as a value.). E represents the average outcome of the game after a sufficient amount of samples, where ``1'' correponds to a victory of team 0 and ``0'' a victory of team 1.
+where $s=400$ in chess (In table tennis, 200 was chosen as a value.). E represents the average outcome of the game after a sufficient amount of samples, where ``1'' correponds to a victory of team 0 and ``0'' a victory of team 1.
 Then, the team strengths are updated as follows:
 \begin{eqnarray}
   X_0^{\prime} &= X_0 + k \cdot \left(S - E \right) \\
@@ -87,6 +89,38 @@ Fig. \ref{fig:test_elo} shows the difference between the two methods. For the fi
 \includegraphics[width=0.7\linewidth]{test_elo}
     \caption{Change of ind. player strengths after their team wins (top) of loses (bottom). The strenght of P1 is always 1400., while the strength of P0 varies from 1400. to 2400., i.e., he is stronger than P1.}
   \label{fig:test_elo}
+\end{figure}
+
+\section{Setting of parameters $k$, $s$}
+\label{sec:calibration}
+\begin{itemize}
+\item $s$ is a simple scale parameter, which was chosen to be 400 for chess for historical reason. Thus, we can simply set it to 1. We adjust the starting value of the ELO numbers to $3.5=1400/400$.
+\item $k$ controls the size of fluctuations from one to another game, where $k=20/400=0.05$ seems to be the most reasonable value, cf. \fref{fig:parameter_k}. Note that $k$ is not simply a 'kernel width' because the whole ELO process is a 2nd-order process.
+\end{itemize}
+
+\begin{figure}
+\includegraphics[width=0.7\linewidth]{parameter_k}
+    \caption{Time development of the ELO numbers for different values of $k$: 0.01 (top left), 0.05 (top right), 0.1 (bottom left) and 1.0 (bottom right)}
+  \label{fig:parameter_k}
+\end{figure}
+
+\section{Extension of the ELO update rule}
+A kicker game does not only yield binary information about winning or losing, but it ends with a goal score. If we don't want to lose this additional information, we can extend the ELO update rule introduced in (\fref{eq:update}).
+If we set the game result to 1 for a win and to 0 for a loss, we basically map the number of scored goals with a heaviside function to 1 or 0. We can extend the information, by mapping the scored goals $g$ as follows:
+\begin{equation}
+  S(g0, g1) = c \cdot \Theta(g0 - g1) + (1-c) 
+\begin{cases}
+    \frac{1}{6} \left( g0-g1 \right) \, &g0>g1 \\
+(1-\frac{1}{6}) \left( g0-g1 \right) \, &g0<g1
+\end{cases}
+\label{eq:goal_mapping}
+\end{equation}
+
+\fref{fig:elo_goalscore}
+\begin{figure}
+\includegraphics[width=0.7\linewidth]{elo_goalscore}
+    \caption{Time development of the ELO numbers for different update methods: Left column: Goals mapped to win/loss only, right column: Goals taken into account according to (\fref{eq:goal_mapping}) with $c=0.75$. Top row: Original data, bottom row: Manipulated data where the games of the light blue player have been manipulated such that every win of him reads 6-5, and of the purple player such that all his wins read 6-0.}
+  \label{fig:elo_goalscore}
 \end{figure}
 
 
