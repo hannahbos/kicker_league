@@ -1,0 +1,335 @@
+#+LATEX_CLASS: article
+#+TITLE:  ELO numbers for random teams/an exercise in reproducible research
+#+AUTHOR: Maximilian Schmidt, Jakob Jordan
+#+OPTIONS:
+
+* Calculation of the ELO number
+  Say we have 4 players $p_i, i \in \{a,b,c,d \}$ with individual ELO
+  numbers $x_i$, which form two teams $t_0 = [p_a, p_b], t_1 =
+  [p_c,p_d]$ with team strenghts $X_1,X_0$.  Then the expectation
+  value of the game outcome reads
+  \begin{equation}
+  E = \frac{1}{1+10^{\frac{(X_1-X_0)}{s}}}\, ,
+  \end{equation}
+  where $s=400$ in chess (In table tennis, 200 was chosen as a value.). E represents the average outcome of the game after a sufficient amount of samples, where ``1'' correponds to a victory of team 0 and ``0'' a victory of team 1.
+  Then, the team strengths are updated as follows:
+  \begin{eqnarray}
+  X_0^{\prime} &= X_0 + k \cdot \left(S - E \right) \\
+  X_1^{\prime} &= X_1 + k \cdot \left(E-S \right)
+  \label{eq:update}
+  \end{eqnarray}
+  where $k$ is a constant which has to be chosen, in chess, $k=20$. The game thus leads to changes of team strenghts:
+  \begin{equation}
+  \delta_i = X_i^{\prime} - X_i
+  \end{equation}
+
+  Overall, after the teams have played, the strenghts of the 4 players are updated as follows:
+  \begin{eqnarray}
+  x_a^{\prime} &= x_a + \delta_0^{(a)} \\
+  x_b^{\prime} &= x_b + \delta_0^{(b)} \\
+  x_c^{\prime} &= x_c + \delta_1^{(c)} \\
+  x_d^{\prime} &= x_d + \delta_1^{(d)} 
+  \end{eqnarray}
+  
+  \section{Geometric vs. arithmetic mean}
+  Say we have 4 players $p_i, i \in \{a,b,c,d \}$ with individual ELO numbers $x_i$ which form two teams $t_0 = [p_a, p_b], t_1 = [p_c,p_d]$.
+  The first question is: How to derive team strengths $X_0,X_1$ for the two teams.
+  \begin{enumerate}
+  \item Arithmetic mean: The simplest way would be to compute the team strengths as the arithmetic means of the indivual player strengths:
+  \begin{eqnarray}
+  X_0 &= \frac{1}{2} \left(x_a+x_b \right) \\
+  X_1 &= \frac{1}{2} \left(x_c+x_d \right) 
+  \end{eqnarray}
+  \item Geometric mean: Alternatively, one could use the geometric mean.
+  \begin{eqnarray}
+  X_0 &= \sqrt{x_a \, x_b } \\
+  X_1 &= \sqrt{x_c \,x_d } 
+  \end{eqnarray}
+  \end{enumerate}
+  
+  What is the difference between the two methods. Figure [[means]] shows that for teams with very different individual strengths, the geometric mean is lower than the arithmetic mean while they are exactly equal for equal player strengths. One could argue for two different hypotheses:
+  \begin{itemize}
+  \item In a kicker team, equal players are more stronger than a team of one strong and one weak player $\Rightarrow$ Geometric mean
+  \item It is more benefitial to have one strong player in the team $\Rightarrow$ Arithmetic mean.
+  \end{itemize}
+
+#+BEGIN_SRC python :exports none
+import numpy as np
+import pylab as pl
+execfile('elo.py')
+
+x = np.arange(400.,2400.,10.)
+y = np.ones_like(x)*1400.
+z = np.vstack((x,y))
+
+## arithmetic mean
+a = np.mean(z,axis=0)
+g = np.sqrt(np.prod(z,axis=0))
+
+fig1 = pl.figure(1)
+pl.plot(a,g,'.')
+pl.plot(a,a)
+
+pl.xlabel('Geometric mean')
+pl.ylabel('Arithmetic mean')
+
+pl.savefig('means.pdf')
+#+END_SRC
+
+  #+CAPTION: Comparison of geometric vs. arithmetic mean for a team of $x_a=1400$ and $x_b$ varying from 400 to 2400.
+  #+NAME: means
+  [[./means.pdf]]
+
+* How to distribute the change of team strength among the players
+  After calculating team strengths, we can perform the update rule
+  presented in equation (\ref{eq:update}) and get a certain $\delta_i$
+  for each team. The question is: How do we distribute this $\delta_i$
+  among the players? Two different options are possible:
+  \begin{itemize}
+  \item Distribute $\delta_i$ equally among the players:
+  \begin{equation}
+  \delta_i^{(j)} = \frac{1}{2} \delta_i
+  \end{equation}
+  This ensures that the difference between the players' strenghts remains constant, which seems sensible because in the calculation of expectation values, it is the difference of ELO numbers which matters and if 2 players play in the same team, the result of the team game does not gives us any information on their relative strengths.
+  \item On the other hand, we can expect that the players' responsabilities for the outcome of the game are not equal. Typically, you would expect that the stronger players is more influential on the outcome, i.e., if the team wins, he should gain more credit for the victory. We can provide for this by conserving not the difference of ELO strengths but their proportion, i.e. by distributing the team increase/decrease $\delta_i$ according to the individual strenghts that they brought into the team strength:
+  \begin{equation}
+  \delta_i^{(j)} = \frac{x_j}{\sum_j x_j} \delta_i
+  \end{equation}
+  \end{itemize}
+  
+  Fig. [[fig:test_elo]] shows the difference between the two
+  methods. For the first option, both player always get the same
+  change in strengths, no matter whether they are equally strong. For
+  the 2nd option, the stronger player gets a higher increase of
+  strength if the team wins but also a higher decrease if the team
+  loses.
+
+#+BEGIN_SRC python :exports none
+import numpy as np
+import pylab as pl
+from elo import *
+
+x = np.arange(1400.,2400.,10.)
+y = np.ones_like(x)*1400.
+z = np.vstack((x,y))
+
+t1_updated_arith = []
+t1_updated_geo = []
+t1_updated_geo_2 = []
+t1_updated_geo2 = []
+t1_updated_geo2_2 = []
+t2_updated = []
+
+k=20.
+scale=400.
+for t1 in zip(x,y) :
+    t2 = (1400.,1400.)
+    d1_arith,d2_arith = update_elo_teams(t1, t2, 6.,0., k, scale, team_method='arithmetic', result_method='heaviside', dist_method='equal') ### arithmetic
+    t1_updated_arith.append(d1_arith[1]-t1[1])
+
+    d1_geo,d2_geo = update_elo_teams(t1, t2, 6.,0., k, scale, team_method='geometric', result_method='heaviside', dist_method='equal') ### geometric
+    t1_updated_geo.append(d1_geo[1]-t1[1])
+    t1_updated_geo_2.append(d1_geo[0]-t1[0])
+
+    d1_geo2,d2_geo2 = update_elo_teams(t1, t2, 6.,0., k, scale, team_method='geometric', result_method='heaviside', dist_method='weighted') ### geometric
+    t1_updated_geo2.append(d1_geo2[1]-t1[1])
+    t1_updated_geo2_2.append(d1_geo2[0]-t1[0])
+
+fig= pl.figure()
+ax = fig.add_subplot(211)
+pl.title('Team1 wins')
+pl.plot(x,t1_updated_geo, label='equal dist. P1')
+pl.plot(x,t1_updated_geo_2, label='equal dist. P0')
+#pl.plot(x,np.array(t1_updated_geo)+np.array(t1_updated_geo_2), 'x',label='geo mean sum')
+
+pl.plot(x,t1_updated_geo2, label='weighted dist. P1')
+pl.plot(x,t1_updated_geo2_2, label='weighted dist. P0 (strong)')
+#pl.plot(x,np.array(t1_updated_geo2)+np.array(t1_updated_geo2_2), 'x',label='geo2 mean sum')
+pl.ylabel(r'$\delta^{(j)}$')
+pl.legend(loc='upper right')
+
+t1_updated_arith = []
+t1_updated_geo = []
+t1_updated_geo_2 = []
+t1_updated_geo2 = []
+t1_updated_geo2_2 = []
+t2_updated = []
+
+result=0.
+k=20.
+for t1 in zip(x,y) :
+    t2 = (1400.,1400.)
+
+    d1_arith,d2_arith = update_elo_teams(t1, t2, 0.,6., k, scale, team_method='arithmetic', result_method='heaviside', dist_method='equal') ### arithmetic
+    t1_updated_arith.append(d1_arith[1]-t1[1])
+
+    d1_geo,d2_geo = update_elo_teams(t1, t2, 0.,6., k, scale, team_method='geometric', result_method='heaviside', dist_method='equal') ### geometric
+    t1_updated_geo.append(d1_geo[1]-t1[1])
+    t1_updated_geo_2.append(d1_geo[0]-t1[0])
+
+    d1_geo2,d2_geo2 = update_elo_teams(t1, t2, 0.,6., k, scale, team_method='geometric', result_method='heaviside', dist_method='weighted') ### geometric
+    t1_updated_geo2.append(d1_geo2[1]-t1[1])
+    t1_updated_geo2_2.append(d1_geo2[0]-t1[0])
+
+ax = fig.add_subplot(212)
+pl.title('Team1 loses')
+pl.plot(x,t1_updated_geo, label='geo mean P1')
+pl.plot(x,t1_updated_geo_2, label='geo mean P0  (strong)')
+#pl.plot(x,np.array(t1_updated_geo)+np.array(t1_updated_geo_2), 'x',label='geo mean sum')
+
+pl.plot(x,t1_updated_geo2, label='geo2 mean P1')
+pl.plot(x,t1_updated_geo2_2, label='geo2 mean P0  (strong)')
+#pl.plot(x,np.array(t1_updated_geo2)+np.array(t1_updated_geo2_2), 'x',label='geo2 mean sum')
+pl.ylabel(r'$\delta^{(j)}$')
+pl.xlabel('P0 strength')
+pl.savefig('test_elo.pdf')
+#+END_SRC
+
+  #+CAPTION: Change of ind. player strengths after their team wins (top) of loses (bottom). The strenght of P1 is always 1400., while the strength of P0 varies from 1400. to 2400., i.e., he is stronger than P1.
+  #+NAME: fig:test_elo
+  [[./test_elo.pdf]]
+
+* Setting of parameters $k$, $s$
+  \begin{itemize}
+  \item $s$ is a simple scale parameter, which was chosen to be 400 for chess for historical reason. Thus, we can simply set it to 1. We adjust the starting value of the ELO numbers to $3.5=1400/400$.
+  \item $k$ controls the size of fluctuations from one to another game, where $k=20/400=0.05$ seems to be the most reasonable value, cf. [[fig:parameterk]]. Note that $k$ is not simply a 'kernel width' because the whole ELO process is a 2nd-order process.
+  \end{itemize}
+  
+#+BEGIN_SRC python :exports none
+execfile('kicker_data.py')
+from elo import *
+import pylab as pl
+
+scale=1.
+
+fig = pl.figure(2)
+
+for ii,k in enumerate([0.01,0.05,0.1,1.]) :
+
+    for player in players :
+        player['ELO'] = 3.5
+        player['ELO_history'] = []
+
+    for game in results :
+        p00 = players[game['black0']-1]
+        p01 = players[game['black1']-1]
+
+        p10 = players[game['red0']-1]
+        p11 = players[game['red1']-1]
+
+        ### geometric mean
+        t0 = (p00['ELO'], p01['ELO'])
+        t1 = (p10['ELO'], p11['ELO'])
+
+        t0_updated, t1_updated = update_elo_teams(t0,t1,game['score_black'],game['score_red'], k, scale, team_method='geometric', result_method='heaviside', dist_method='weighted')
+
+        p00['ELO'] = t0_updated[0]
+        p01['ELO'] = t0_updated[1]
+        p10['ELO'] = t1_updated[0]
+        p11['ELO'] = t1_updated[1]
+
+        for p in players :
+            p['ELO_history'].append(p['ELO'])
+
+    ax = fig.add_subplot(2,2,ii+1)
+
+    color_map = pl.get_cmap('gist_ncar')
+    NUM_COLORS = len(players)
+
+    for ii,p in enumerate(players) :
+        ax.set_color_cycle([color_map(1.*ii/NUM_COLORS) for _ in range(NUM_COLORS)])
+        ax.plot(p['ELO_history'], '-', label=p['name'])
+
+    pl.xlabel('time')
+    pl.ylabel('ELO')
+
+pl.savefig('parameterk.pdf')
+#+END_SRC
+
+#+RESULTS:
+: None
+
+  #+CAPTION: Time development of the ELO numbers for different values of $k$: 0.01 (top left), 0.05 (top right), 0.1 (bottom left) and 1.0 (bottom right)
+  #+NAME: fig:parameterk
+  [[./parameterk.pdf]]
+* Extension of the ELO update rule
+  A kicker game does not only yield binary information about winning
+  or losing, but it ends with a goal score. If we don't want to lose
+  this additional information, we can extend the ELO update rule
+  introduced in (\fref{eq:update}).  If we set the game result to 1
+  for a win and to 0 for a loss, we basically map the number of scored
+  goals with a heaviside function to 1 or 0. We can extend the
+  information, by mapping the scored goals $g$ as follows:
+  \begin{equation}
+  S(g0, g1) = c \cdot \Theta(g0 - g1) + (1-c) 
+  \begin{cases}
+  \frac{1}{6} \left( g0-g1 \right) \, &g0>g1 \\
+  (1-\frac{1}{6}) \left( g0-g1 \right) \, &g0<g1
+  \end{cases}
+  \label{eq:goal_mapping}
+  \end{equation}
+  #+BEGIN_SRC python :exports none
+execfile('kicker_data.py')
+from elo import *
+import pylab as pl
+
+scale=1.
+k=0.05
+
+fig = pl.figure(2)
+
+for ii,(result_method,threshold) in enumerate(zip(['heaviside', 'threshold_linear', 'heaviside','threshold_linear'],[1.0,0.75,1.0, 0.75])) :
+
+    if ii >= 2 :
+        ### Load manipulated data
+        import json
+        f = open('kicker_data_manip.json','r')
+        results = json.load(f)
+
+    for player in players :
+        player['ELO'] = 3.5
+        player['ELO_history'] = []
+
+    for game in results :
+        p00 = players[game['black0']-1]
+        p01 = players[game['black1']-1]
+
+        p10 = players[game['red0']-1]
+        p11 = players[game['red1']-1]
+
+
+        ### geometric mean
+        t0 = (p00['ELO'], p01['ELO'])
+        t1 = (p10['ELO'], p11['ELO'])
+
+
+        t0_updated, t1_updated = update_elo_teams(t0,t1,game['score_black'],game['score_red'], k, scale, threshold, team_method='geometric', result_method=result_method, dist_method='weighted')
+
+        p00['ELO'] = t0_updated[0]
+        p01['ELO'] = t0_updated[1]
+        p10['ELO'] = t1_updated[0]
+        p11['ELO'] = t1_updated[1]
+
+
+        for p in players :
+            p['ELO_history'].append(p['ELO'])
+
+    ax = fig.add_subplot(2,2,ii+1)
+
+    color_map = pl.get_cmap('gist_ncar')
+    NUM_COLORS = len(players)
+
+    for ii,p in enumerate(players) :
+        ax.set_color_cycle([color_map(1.*ii/NUM_COLORS) for _ in range(NUM_COLORS)])
+        ax.plot(p['ELO_history'], '-', label=p['name'])
+
+    pl.xlabel('time')
+    pl.ylabel('ELO')
+    pl.ylim((3.,4.))
+
+pl.savefig('elo_goalscore.pdf')
+  #+END_SRC
+
+  #+CAPTION: Time development of the ELO numbers for different update methods: Left column: Goals mapped to win/loss only, right column: Goals taken into account according to (\fref{eq:goal_mapping}) with $c=0.75$. Top row: Original data, bottom row: Manipulated data where the games of the light blue player have been manipulated such that every win of him reads 6-5, and of the purple player such that all his wins read 6-0.
+  #+NAME: elogoalscore
+  [[./elo_goalscore.pdf]]
