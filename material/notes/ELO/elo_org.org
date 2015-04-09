@@ -333,3 +333,15 @@ pl.savefig('elo_goalscore.pdf')
   #+CAPTION: Time development of the ELO numbers for different update methods: Left column: Goals mapped to win/loss only, right column: Goals taken into account according to (\fref{eq:goal_mapping}) with $c=0.75$. Top row: Original data, bottom row: Manipulated data where the games of the light blue player have been manipulated such that every win of him reads 6-5, and of the purple player such that all his wins read 6-0.
   #+NAME: elogoalscore
   [[./elo_goalscore.pdf]]
+* Benchmarking
+  To decide which of the possible choices presented above are best
+  mirroring the actual strength of the individual players we need to
+  benchmark different option to compute the ELO score. For this we
+  need to "train" a specific method on a certain subset of the data
+  that we have available and then measure its performance against the
+  other data. One option is to train on the first half of the data set
+  and then award a point each time a certain method has predicted the
+  outcome of a match successfully. This, however, would ignore the
+  probability interpretation of the ELO number. To take this into
+  account is probably not possible, as each game can not be repeated
+  $k$ time to arrive at a probability.
