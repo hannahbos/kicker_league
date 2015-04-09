@@ -1,4 +1,5 @@
 #+LATEX_CLASS: article
+#+LATEX_CLASS_OPTIONS: [a4paper,10pt]
 #+TITLE:  ELO numbers for random teams/an exercise in reproducible research
 #+AUTHOR: Maximilian Schmidt, Jakob Jordan
 #+OPTIONS:
