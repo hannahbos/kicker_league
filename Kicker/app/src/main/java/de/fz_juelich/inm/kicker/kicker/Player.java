@@ -8,11 +8,13 @@ public class Player implements Comparable<Player>{
     int id;
     String name;
     int score;
+    int elo;
 
-    Player(int id, String name, int score){
+    Player(int id, String name, int score, int elo){
         this.id = id;
         this.name = name;
         this.score = score;
+        this.elo = elo;
     }
 
     @Override
