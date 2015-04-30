@@ -35,6 +35,9 @@ public class EnterScoreActivity extends ActionBarActivity {
     TextView player_red1;
     TextView player_black0;
     TextView player_black1;
+    TextView predict_red;
+    TextView predict_black;
+
 
 
     @Override
@@ -50,8 +53,10 @@ public class EnterScoreActivity extends ActionBarActivity {
         stars_black.getDrawable(2).setColorFilter(0xA0000000, PorterDuff.Mode.MULTIPLY);
         player_red0 = (TextView) findViewById(R.id.player_red0);
         player_red1 = (TextView) findViewById(R.id.player_red1);
+        predict_red = (TextView) findViewById(R.id.predict_red);
         player_black0 = (TextView) findViewById(R.id.player_black0);
         player_black1 = (TextView) findViewById(R.id.player_black1);
+        predict_black = (TextView) findViewById(R.id.predict_black);
 
         String request_url = "http://dper.de:9898/getcurrentgame/";
         Log.i("onCreate", "url: " + request_url);
@@ -60,15 +65,32 @@ public class EnterScoreActivity extends ActionBarActivity {
             public void onResponse(String response) {
                 Log.i("onCreate_request", "response: " + response);
                 try {
-                    JSONObject oPlayers = new JSONObject(response);
+                    JSONObject JSONresponse = new JSONObject(response);
+                    JSONObject oPlayers = new JSONObject(JSONresponse.getString(("current_game")));
                     player_red0.setText(oPlayers.getString("red0_name"));
                     player_red1.setText(oPlayers.getString("red1_name"));
                     player_red0.setBackgroundColor(0xA0FF0000);
                     player_red1.setBackgroundColor(0xA0FF0000);
+
                     player_black0.setText(oPlayers.getString("black0_name"));
                     player_black1.setText(oPlayers.getString("black1_name"));
                     player_black0.setBackgroundColor(0xA0000000);
                     player_black1.setBackgroundColor(0xA0000000);
+
+                    double prob_red = Float.parseFloat(JSONresponse.getString("prob"));
+                    StringBuilder _predict_red = new StringBuilder();
+                    _predict_red.append("P = ");
+                    _predict_red.append(String.format("%.2f",prob_red));
+                    _predict_red.append(", points to win : ");
+                    _predict_red.append(JSONresponse.getString(("points_red")));
+                    predict_red.setText(_predict_red);
+                    double prob_black = 1. - Float.parseFloat(JSONresponse.getString("prob"));
+                    StringBuilder _predict_black = new StringBuilder();
+                    _predict_black.append("P = ");
+                    _predict_black.append(String.format("%.2f",prob_black));
+                    _predict_black.append(", points to win : ");
+                    _predict_black.append(JSONresponse.getString(("points_black")));
+                    predict_black.setText(_predict_black);
                 }
                 catch(JSONException e) {
                     Log.i("getcurrentgame_request", "JSONException when getting current game.");

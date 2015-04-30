@@ -48,6 +48,15 @@
 
         </LinearLayout>
 
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="..."
+            android:id="@+id/predict_red"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="0.05" />
+
         <RatingBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -86,6 +95,15 @@
                 android:layout_weight="1"
                 android:gravity="center_horizontal" />
         </LinearLayout>
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="..."
+            android:id="@+id/predict_black"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="0.05" />
 
         <RatingBar
             android:layout_width="wrap_content"
