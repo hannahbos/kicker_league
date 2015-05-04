@@ -40,7 +40,7 @@ import java.util.HashMap;
 import java.util.List;
 import android.graphics.Color;
 
-public class PlayersRanking extends ActionBarActivity implements View.OnClickListener {
+public class PlayersRanking extends ActionBarActivity {
 
     TableLayout table;
     Player[] players;
@@ -121,80 +121,8 @@ public class PlayersRanking extends ActionBarActivity implements View.OnClickLis
         });
 
 
-        /*String request_url = "http://dper.de:9898/getcurrentgame/";
-        Log.i("refresh", "url: " + request_url);
-        StringRequest stringRequest_currentgame = new StringRequest(Request.Method.GET, request_url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                Log.i("refresh_getcurrentgame_request", "response: " + response);
-                if (response.contentEquals("-1")) {
-                    mainmenu.getItem(0).setEnabled(false);
-                    mainmenu.getItem(0).setVisible(false);
-                }
-                else {
-                    mainmenu.getItem(0).setEnabled(true);
-                    mainmenu.getItem(0).setVisible(true);
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.i("refresh_getcurrentgame_request", "volley error: " + error.getMessage());
-                CharSequence errortext;
-                if (error.getCause() instanceof UnknownHostException) {
-                    errortext = "Connection error.";
-                }
-                else{
-                    errortext = "Unknown error.";
-                }
-                Toast errortoast = Toast.makeText(getApplicationContext(), errortext, Toast.LENGTH_SHORT);
-                errortoast.show();
-            }
-        });
-        queue.getCache().clear();
-        queue.add(stringRequest_currentgame);
-        queue.add(stringRequest);*/
         queue.getCache().clear();
         queue.add(stringRequest);
-    }
-    public void onClick(View v){
-//        Button b = (Button) v;
-//        Log.i("player button", b.getText().toString());
-//
-//        // create new list with winners AND losers to simplify search
-//        int index = all.indexOf(b);
-//        if (index == -1){
-//            // if entry does not exists, create new
-//            int newindex = all.indexOf(null);
-//            if (newindex != -1) {
-//                // if a slot is open
-//                all.set(newindex, b);
-//                if (newindex >= 0 && newindex < 2) {
-//                    b.getBackground().setColorFilter(0xA0FF0000, PorterDuff.Mode.MULTIPLY);
-//                }
-//                else if (newindex >= 2 && newindex < 4) {
-//                    b.getBackground().setColorFilter(0xA0000000, PorterDuff.Mode.MULTIPLY);
-//                }
-//            }
-//        }
-//        else {
-//            // if entry does already exists, clear entry
-//            all.set(index, null);
-//            if (index >= 0 && index < 2) {
-//                b.getBackground().clearColorFilter();
-//            }
-//            else if (index >= 2 && index < 4) {
-//                b.getBackground().clearColorFilter();
-//            }
-//        }
-//
-//        if (!all.contains(null)) {
-//            plus.setEnabled(true);
-//        }
-//        else{
-//            plus.setEnabled(false);
-//        }
-
     }
 
     void createRanking(){
@@ -299,40 +227,6 @@ public static class PlaceholderFragment extends Fragment {
         Log.i("player button", b.getText().toString());
     }
 
-//        // create new list with winners AND losers to simplify search
-//        int index = all.indexOf(b);
-//        if (index == -1){
-//            // if entry does not exists, create new
-//            int newindex = all.indexOf(null);
-//            if (newindex != -1) {
-//                // if a slot is open
-//                all.set(newindex, b);
-//                if (newindex >= 0 && newindex < 2) {
-//                    b.getBackground().setColorFilter(0xA0FF0000, PorterDuff.Mode.MULTIPLY);
-//                }
-//                else if (newindex >= 2 && newindex < 4) {
-//                    b.getBackground().setColorFilter(0xA0000000, PorterDuff.Mode.MULTIPLY);
-//                }
-//            }
-//        }
-//        else {
-//            // if entry does already exists, clear entry
-//            all.set(index, null);
-//            if (index >= 0 && index < 2) {
-//                b.getBackground().clearColorFilter();
-//            }
-//            else if (index >= 2 && index < 4) {
-//                b.getBackground().clearColorFilter();
-//            }
-//        }
-//
-//        if (!all.contains(null)) {
-//            plus.setEnabled(true);
-//        }
-//        else{
-//            plus.setEnabled(false);
-//        }
-//
     }
 
 }
