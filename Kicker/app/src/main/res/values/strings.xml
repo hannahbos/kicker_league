@@ -4,9 +4,11 @@
     <string name="app_name">Kicker</string>
     <string name="addplayer_menu">Add Player</string>
     <string name="refresh_menu">Refresh</string>
+    <string name="players_ranking">Players ranking</string>
     <string name="currentgame_menu">Current game</string>
     <string name="restartgame_menu">Revanche</string>
     <string name="title_activity_enter_score">Enter score</string>
+    <string name="title_activity_players_ranking">Ranking</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="cancelgame_menu">Cancel game</string>
