@@ -41,6 +41,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="de.fz_juelich.inm.kicker.kicker.KickerInsert" />
         </activity>
+        <activity
+            android:name=".PlayersRanking"
+            android:label="@string/title_activity_players_ranking"
+            android:parentActivityName=".KickerInsert" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="de.fz_juelich.inm.kicker.kicker.KickerInsert" />
+        </activity>
         <service android:name="com.parse.PushService" />
         <receiver android:name="com.parse.ParseBroadcastReceiver">
             <intent-filter>

@@ -266,6 +266,11 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
             refresh();
             return true;
         }
+        else if (id == R.id.players_ranking) {
+            Intent intent = new Intent(getApplicationContext(), PlayersRanking.class);
+            startActivity(intent);
+            return true;
+        }
         else if (id == R.id.currentgame_menu) {
             Intent intent = new Intent(getApplicationContext(), EnterScoreActivity.class);
             startActivity(intent);
