@@ -28,3 +28,6 @@ dependencies {
 dependencies {
     compile 'com.parse.bolts:bolts-android:1.+'
 }
+dependencies {
+    compile 'com.android.support:support-v4:19.+'
+}
