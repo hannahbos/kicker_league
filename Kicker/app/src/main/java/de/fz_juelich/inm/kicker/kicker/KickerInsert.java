@@ -177,7 +177,7 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
                     return false;
                 }
             });
-            nameButtons[i].setText(players[i].name + "\n" + players[i].elo);
+            nameButtons[i].setText(players[i].name);
             buttonPlayerMap.put(nameButtons[i], players[i]);
             if (i % 3 == 0){
                 row = new TableRow(this);
