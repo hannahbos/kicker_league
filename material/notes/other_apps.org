@@ -1,0 +1,5 @@
+* Notes on other apps for tracking Kicker games
+** [[http://www.kicker.cool/][kicker.cool]] (browser)
+** [[http://www.androidpit.de/app/elancer.app.kicker][elo-kicker]] (android)
+  - discontinued?
+** [[https://itunes.apple.com/de/app/champion/id886646371?mt=8][champion]] (i-os)
