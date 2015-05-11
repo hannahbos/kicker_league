@@ -12,5 +12,7 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="cancelgame_menu">Cancel game</string>
+    <string name="settings_menu">Settings</string>
+    <string name="title_activity_settings">Settings</string>
 
 </resources>

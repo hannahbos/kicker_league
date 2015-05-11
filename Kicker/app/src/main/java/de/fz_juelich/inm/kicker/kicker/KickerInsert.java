@@ -45,6 +45,8 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
     Player[] players;
     Button[] nameButtons;
     Menu mainmenu;
+    String server_url;
+    int server_port;
 
     List < Button > all = Arrays.asList(new Button[4]);
 
@@ -70,6 +72,13 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
         getSupportActionBar().setDisplayUseLogoEnabled(true);
         queue = Volley.newRequestQueue(this);
         buttonPlayerMap = new HashMap<>();
+        SharedPreferences serverSettings = getSharedPreferences("serversettings", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = serverSettings.edit();
+        editor.putString("server_url", "http://dper.de");
+        editor.putInt("server_port", 9898);
+        editor.commit();
+        server_url = serverSettings.getString("server_url", "");
+        server_port = serverSettings.getInt("server_port", 0);
     }
 
     @Override
@@ -93,7 +102,7 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
         all = Arrays.asList(new Button[4]);
         plus.setEnabled(false);
 
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, "http://dper.de:9898/getplayers/", new Response.Listener<String>() {
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, server_url+":"+server_port+"/getplayers/", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 Log.i("refresh_request", "response: " + response);
@@ -129,7 +138,7 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
         });
 
 
-        String request_url = "http://dper.de:9898/getcurrentgame/";
+        String request_url = server_url+":"+server_port+"/getcurrentgame/";
         Log.i("refresh", "url: " + request_url);
         StringRequest stringRequest_currentgame = new StringRequest(Request.Method.GET, request_url, new Response.Listener<String>() {
             @Override
@@ -234,7 +243,7 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
             builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    String url = "http://dper.de:9898/addplayer/";
+                    String url = server_url+":"+server_port+"/addplayer/";
                     String request_url = url + name.getText();
 
                     Log.i("addplayer_menu", "url: " + request_url);
@@ -280,9 +289,14 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
             startActivity(intent);
             return true;
         }
+        else if (id == R.id.settings_menu) {
+            Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
+            startActivity(intent);
+            return true;
+        }
         else if (id == R.id.restartgame_menu) {
             Log.i("restartgame_menu", "restarting game");
-            String url = "http://dper.de:9898/restartgame/";
+            String url = server_url+":"+server_port+"/restartgame/";
             Log.i("startGame", "url: " + url);
             StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
                 @Override
@@ -374,7 +388,7 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
 
     public void startGame(View v){
         Log.i("startGame", "starting game");
-        String url = "http://dper.de:9898/startgame/";
+        String url = server_url+":"+server_port+"/startgame/";
         String request_url = url + buttonPlayerMap.get(all.get(0)).id + "/" + buttonPlayerMap.get(all.get(1)).id +
                                 "/" + buttonPlayerMap.get(all.get(2)).id + "/" + buttonPlayerMap.get(all.get(3)).id;
         Log.i("startGame", "url: " + request_url);
@@ -413,7 +427,7 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
         builder.setPositiveButton("Hell yeah!", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                String request_url = "http://dper.de:9898/deleteplayer/" + player_id;
+                String request_url = server_url+":"+server_port+"/deleteplayer/" + player_id;
                 Log.i("deletePlayer", "url: " + request_url);
                 StringRequest stringRequest = new StringRequest(Request.Method.GET, request_url, new Response.Listener<String>() {
                     @Override
