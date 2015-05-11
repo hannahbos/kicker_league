@@ -1,0 +1,6 @@
+* Notes on kicker.cool implementation
+  find the source on [[https://github.com/railslove/kickerapp][github]]
+** crawling changes quota:
+   - kickerapp/app/models/match.rb#L49
+** calculation of elo quota:
+   - kickerapp/app/services/quota_calculator.rb
