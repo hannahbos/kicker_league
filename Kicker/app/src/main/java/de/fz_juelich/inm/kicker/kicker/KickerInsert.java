@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -57,9 +59,10 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_kicker_insert);
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new PlaceholderFragment())
-                    .commit();
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            PlaceholderFragment fragment = new PlaceholderFragment();
+            transaction.add(R.id.container, fragment);
+            transaction.commit();
         }
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setLogo(R.drawable.fun_icon);
@@ -318,13 +321,40 @@ public class KickerInsert extends ActionBarActivity implements View.OnClickListe
      */
     public static class PlaceholderFragment extends Fragment {
 
+        SwipeRefreshLayout swipeView;
+
         public PlaceholderFragment() {
         }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            return inflater.inflate(R.layout.fragment_kicker_insert, container, false);
+            View view = inflater.inflate(R.layout.fragment_kicker_insert, container, false);
+            swipeView = (SwipeRefreshLayout) view.findViewById(R.id.swipe);
+            return view;
+        }
+
+        @Override
+        public void onViewCreated(View view, Bundle savedInstanceState) {
+            super.onViewCreated(view, savedInstanceState);
+
+                /**
+             * Implement {@link SwipeRefreshLayout.OnRefreshListener}. When users do the "swipe to
+             * refresh" gesture, SwipeRefreshLayout invokes
+             * {@link SwipeRefreshLayout.OnRefreshListener#onRefresh onRefresh()}. In
+             * {@link SwipeRefreshLayout.OnRefreshListener#onRefresh onRefresh()}, call a method that
+             * refreshes the content. Call the same method in response to the Refresh action from the
+             * action bar.
+             */
+            swipeView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    swipeView.setRefreshing(true);
+                    Log.i("Log: ", "onRefresh called from SwipeRefreshLayout");
+                    swipeView.setRefreshing(false);
+                    //initiateRefresh();
+                }
+            });
         }
     }
 
