@@ -3,13 +3,17 @@ package de.fz_juelich.inm.kicker.kicker;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,6 +26,7 @@ import android.widget.ImageButton;
 import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import android.content.Context;
@@ -36,30 +41,38 @@ import org.json.*;
 
 import java.net.UnknownHostException;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 
-public class KickerInsert extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity {
 
-    Menu mainmenu;
+    public Menu mainmenu;
 
     RequestQueue queue;
 
-    PlaceholderFragment fragment;
+    SectionsPagerAdapter mSectionsPagerAdapter;
 
+    /**
+     * The {@link ViewPager} that will host the section contents.
+     */
+    ViewPager mViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.i("KickerInset", "OnCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_kicker_insert);
-        if (savedInstanceState == null) {
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            fragment = new PlaceholderFragment();
-            transaction.add(R.id.container, fragment);
-            transaction.commit();
-        }
+
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+
+        // Set up the ViewPager with the sections adapter.
+        mViewPager = (ViewPager) findViewById(R.id.pager);
+        mViewPager.setAdapter(mSectionsPagerAdapter);
+        mViewPager.setCurrentItem(1);
+
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setLogo(R.drawable.fun_icon);
         getSupportActionBar().setDisplayUseLogoEnabled(true);
@@ -69,7 +82,7 @@ public class KickerInsert extends ActionBarActivity {
     @Override
     protected void onStart(){
         super.onStart();
-        fragment.refresh();
+        //fragment.refresh();
     }
 
     @Override
@@ -80,7 +93,7 @@ public class KickerInsert extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_kicker_insert, menu);
+        getMenuInflater().inflate(R.menu.menu_main, menu);
         mainmenu = menu;
         // disable button which shows current game
         mainmenu.getItem(0).setEnabled(false);
@@ -140,11 +153,6 @@ public class KickerInsert extends ActionBarActivity {
             builder.show();
             return true;
         }
-        else if (id == R.id.players_ranking) {
-            Intent intent = new Intent(getApplicationContext(), PlayersRanking.class);
-            startActivity(intent);
-            return true;
-        }
         else if (id == R.id.currentgame_menu) {
             Intent intent = new Intent(getApplicationContext(), EnterScoreActivity.class);
             startActivity(intent);
@@ -187,10 +195,70 @@ public class KickerInsert extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
+    /**
+     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
+     * one of the sections/tabs/pages.
+     */
+    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+
+        public SectionsPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            // getItem is called to instantiate the fragment for the given page.
+            // Return a PlaceholderFragment (defined as a static inner class below).
+
+            Log.i("POSITION",String.valueOf(position));
+            if (position==0)
+            {
+                PlayersRankingFragment fragment = new PlayersRankingFragment();
+                return fragment;
+            }
+            else if (position==1)
+            {
+                StartGameFragment fragment = new StartGameFragment();
+                return fragment;
+            }
+            else {
+                return null;
+            }
+
+        }
+
+
+        @Override
+        public int getCount() {
+            // Show 3 total pages.
+            return 2;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            Locale l = Locale.getDefault();
+            switch (position) {
+                case 0:
+                    return getString(R.string.title_start_game).toUpperCase(l);
+                case 1:
+                    return getString(R.string.title_players_ranking).toUpperCase(l);
+//                case 2:
+//                    return getString(R.string.title_section3).toUpperCase(l);
+            }
+            return null;
+        }
+    }
+
+
     /**
      * A placeholder fragment containing a simple view.
      */
-    public static class PlaceholderFragment extends Fragment implements View.OnClickListener {
+    public static class StartGameFragment extends Fragment implements View.OnClickListener {
+        /**
+         * The fragment argument representing the section number for this
+         * fragment.
+         */
 
         TableLayout table;
         Player[] players;
@@ -199,14 +267,12 @@ public class KickerInsert extends ActionBarActivity {
         ImageButton plus;
         RequestQueue queue;
 
-        Menu mainmenu;
-
         HashMap<Button, Player> buttonPlayerMap;
         Context thiscontext;
         SwipeRefreshLayout swipeView;
         ScrollView scroll;
 
-        public PlaceholderFragment() {
+        public StartGameFragment() {
         }
 
         @Override
@@ -214,7 +280,15 @@ public class KickerInsert extends ActionBarActivity {
                                  Bundle savedInstanceState) {
 
             thiscontext = container.getContext();
-            View view = inflater.inflate(R.layout.fragment_kicker_insert, container, false);
+            final View view = inflater.inflate(R.layout.fragment_kicker_insert, container, false);
+
+            plus = (ImageButton) view.findViewById(R.id.plus);
+            plus.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startGame(view);
+                }
+            });
             table = (TableLayout) view.findViewById(R.id.table);
             swipeView = (SwipeRefreshLayout) view.findViewById(R.id.swipe);
             scroll = (ScrollView) view.findViewById(R.id.scrollView);
@@ -227,14 +301,8 @@ public class KickerInsert extends ActionBarActivity {
 
                 @Override
                 public void onScrollChanged() {
-
-                    int scrollX = scroll.getScrollX(); //for horizontalScrollView
                     int scrollY = scroll.getScrollY(); //for verticalScrollView
-                    Log.i("scrollX",String.valueOf(scrollX));
-                    Log.i("scrollY",String.valueOf(scrollY));
                     swipeView.setEnabled(scrollY == 0);
-                    //DO SOMETHING WITH THE SCROLL COORDINATES
-
                 }
             });
 
@@ -463,45 +531,197 @@ public class KickerInsert extends ActionBarActivity {
             }
 
         }
-    }
-
-
-
-    public void startGame(View v){
-        Log.i("startGame", "starting game");
-        String url = "http://dper.de:9898/startgame/";
-        String request_url = url + fragment.buttonPlayerMap.get(fragment.all.get(0)).id + "/" + fragment.buttonPlayerMap.get(fragment.all.get(1)).id +
-                                "/" + fragment.buttonPlayerMap.get(fragment.all.get(2)).id + "/" + fragment.buttonPlayerMap.get(fragment.all.get(3)).id;
-        Log.i("startGame", "url: " + request_url);
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, request_url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                Log.i("startGame_request", "response: " + response);
-                if (Integer.parseInt(response) == -1){
-                    Toast errortoast = Toast.makeText(getApplicationContext(), "Game already running.", Toast.LENGTH_LONG);
+        public void startGame(View v){
+            Log.i("startGame", "starting game");
+            String url = "http://dper.de:9898/startgame/";
+            String request_url = url + buttonPlayerMap.get(all.get(0)).id + "/" + buttonPlayerMap.get(all.get(1)).id +
+                    "/" + buttonPlayerMap.get(all.get(2)).id + "/" + buttonPlayerMap.get(all.get(3)).id;
+            Log.i("startGame", "url: " + request_url);
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, request_url, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    Log.i("startGame_request", "response: " + response);
+                    if (Integer.parseInt(response) == -1){
+                        Toast errortoast = Toast.makeText(getActivity().getApplicationContext(), "Game already running.", Toast.LENGTH_LONG);
+                        errortoast.show();
+                    }
+                    Intent intent = new Intent(getActivity().getApplicationContext(), EnterScoreActivity.class);
+                    startActivity(intent);
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.i("startGame_request", "volley error: " + error.getMessage());
+                    CharSequence errortext;
+                    if (error.getCause() instanceof UnknownHostException) {
+                        errortext = "Connection error.";
+                    }
+                    else{
+                        errortext = "Unknown error.";
+                    }
+                    Toast errortoast = Toast.makeText(getActivity().getApplicationContext(), errortext, Toast.LENGTH_SHORT);
                     errortoast.show();
                 }
-                Intent intent = new Intent(getApplicationContext(), EnterScoreActivity.class);
-                startActivity(intent);
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.i("startGame_request", "volley error: " + error.getMessage());
-                CharSequence errortext;
-                if (error.getCause() instanceof UnknownHostException) {
-                    errortext = "Connection error.";
-                }
-                else{
-                    errortext = "Unknown error.";
-                }
-                Toast errortoast = Toast.makeText(getApplicationContext(), errortext, Toast.LENGTH_SHORT);
-                errortoast.show();
-            }
-        });
-        queue.add(stringRequest);
+            });
+            queue.add(stringRequest);
+        }
     }
 
+
+
+    public static class PlayersRankingFragment extends Fragment {
+
+        TableLayout table;
+        Player[] players;
+        Context thiscontext;
+        RequestQueue queue;
+        ScrollView scroll;
+        SwipeRefreshLayout swipeView;
+
+        public PlayersRankingFragment() {
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+            View view = inflater.inflate(R.layout.fragment_players_ranking, container, false);
+            thiscontext = container.getContext();
+            table = (TableLayout) view.findViewById(R.id.table);
+            scroll = (ScrollView) view.findViewById(R.id.scrollView);
+            queue = Volley.newRequestQueue(thiscontext);
+            //refresh();
+
+            return view;
+        }
+
+        @Override
+        public void onStart() {
+            Log.i("Ranking OnSTART!!!","OH YEAH!");
+            refresh();
+            super.onStart();
+        }
+
+        public void onClick(View v) {
+            Button b = (Button) v;
+            Log.i("player button", b.getText().toString());
+        }
+
+        void refresh(){
+            table.removeAllViews();
+            players = null;
+
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, "http://dper.de:9898/getplayers/", new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    Log.i("refresh_request", "response: " + response);
+                    try {
+                        JSONArray aPlayers = new JSONArray(response);
+                        players = new Player[aPlayers.length()];
+                        for (int i = 0; i < aPlayers.length(); i++){
+                            JSONObject oPlayer = aPlayers.getJSONObject(i);
+                            players[i] = new Player(oPlayer.getInt("id"), oPlayer.getString("name"), oPlayer.getInt("score"), oPlayer.getInt("elo"));
+                        }
+                        Comparator<Player> comp = new EloComparator();
+                        Arrays.sort(players, comp);
+
+                        createRanking();
+                    }
+                    catch(JSONException e){
+                        Log.i("refresh_json", "JSONException when getting players.");
+                    }
+
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.i("refresh_request", "volley error: " + error.getMessage());
+                    CharSequence errortext;
+                    if (error.getCause() instanceof UnknownHostException) {
+                        errortext = "Connection error.";
+                    }
+                    else{
+                        errortext = "Unknown error.";
+                    }
+                    Toast errortoast = Toast.makeText(getActivity().getApplicationContext(), errortext, Toast.LENGTH_SHORT);
+                    errortoast.show();
+                }
+            });
+
+
+            queue.getCache().clear();
+            queue.add(stringRequest);
+        }
+
+        void createRanking(){
+            Log.i("PlayersRanking","createRanking");
+
+            TableRow row = new TableRow(thiscontext);
+            row.setMinimumWidth(table.getWidth());
+            row.setMinimumHeight(table.getHeight()/(players.length+3));
+            table.addView(row);
+
+            row = new TableRow(thiscontext);
+            row.setMinimumWidth(table.getWidth());
+            row.setMinimumHeight(table.getHeight()/(players.length+3));
+            TextView tv = new TextView(thiscontext);
+            tv.setTextAppearance(getActivity().getApplicationContext(), R.style.RankingTitle);
+            tv.setText(" ");
+            tv.setGravity(Gravity.RIGHT);
+            tv.setGravity(Gravity.BOTTOM);
+            tv.setWidth(table.getWidth()*3/8);
+            row.addView(tv);
+
+            tv = new TextView(thiscontext);
+            tv.setText("Player");
+            tv.setTextAppearance(getActivity().getApplicationContext(), R.style.RankingTitle);
+            tv.setGravity(Gravity.BOTTOM);
+            tv.setWidth(table.getWidth()*3/8);
+            row.addView(tv);
+
+            tv = new TextView(thiscontext);
+            tv.setText(" ELO");
+            tv.setTextAppearance(getActivity().getApplicationContext(), R.style.RankingTitle);
+            tv.setGravity(Gravity.BOTTOM);
+            tv.setWidth(table.getWidth()*2/8);
+
+            row.addView(tv);
+            table.addView(row);
+
+
+            for (int i = 0; i < players.length; i++){
+                row = new TableRow(thiscontext);
+                row.setMinimumWidth(table.getWidth());
+                row.setMinimumHeight(table.getHeight()/(players.length+3));
+
+                tv = new TextView(thiscontext);
+                tv.setTextAppearance(getActivity().getApplicationContext(), R.style.RankingEntry);
+                tv.setText(i+1+".");
+                tv.setGravity(Gravity.CENTER);
+                tv.setWidth(table.getWidth() * 3 / 8);
+                row.addView(tv);
+
+                tv = new TextView(thiscontext);
+                tv.setTextAppearance(getActivity().getApplicationContext(), R.style.RankingEntry);
+                tv.setText(players[i].name);
+                tv.setWidth(table.getWidth()*3/8);
+                row.addView(tv);
+
+                tv = new TextView(thiscontext);
+                tv.setTextAppearance(getActivity().getApplicationContext(), R.style.RankingEntry);
+                tv.setText(" "+players[i].elo);
+                tv.setWidth(table.getWidth()*2/8);
+                row.addView(tv);
+                if (i % 2 ==0) {
+                    row.setBackgroundColor(Color.LTGRAY);
+                }
+
+
+                table.addView(row);
+            }
+        }
+
+
+    }
 
 
 }

@@ -4,7 +4,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context=".KickerInsert$PlaceholderFragment">
+    tools:context=".MainActivity$StartGameFragment">
 
     <android.support.v4.widget.SwipeRefreshLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -38,7 +38,6 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/plus"
                 android:src="@android:drawable/ic_input_add"
-                android:onClick="startGame"
                 android:layout_toRightOf="@+id/scrollView"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
