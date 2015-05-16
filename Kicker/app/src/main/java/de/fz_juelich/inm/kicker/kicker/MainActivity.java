@@ -50,10 +50,7 @@ import java.util.Locale;
 
 public class MainActivity extends ActionBarActivity {
 
-    public Menu mainmenu;
-
     RequestQueue queue;
-
     SectionsPagerAdapter mSectionsPagerAdapter;
 
     /**
@@ -352,7 +349,6 @@ public class MainActivity extends ActionBarActivity {
         }
 
         void refresh(){
-            table.removeAllViews();
             nameButtons = null;
             players = null;
             all = Arrays.asList(new Button[4]);
@@ -430,7 +426,7 @@ public class MainActivity extends ActionBarActivity {
         }
 
         void createTable(){
-
+            table.removeAllViews();
             nameButtons = new Button[players.length];
             TableRow row = new TableRow(getActivity());
 
@@ -623,7 +619,6 @@ public class MainActivity extends ActionBarActivity {
         }
 
         void refresh(){
-            table.removeAllViews();
             players = null;
 
             StringRequest stringRequest = new StringRequest(Request.Method.GET, "http://dper.de:9898/getplayers/", new Response.Listener<String>() {
@@ -671,6 +666,7 @@ public class MainActivity extends ActionBarActivity {
         void createRanking(){
             Log.i("PlayersRanking","createRanking");
 
+            table.removeAllViews();
             TableRow row = new TableRow(thiscontext);
             row.setMinimumWidth(table.getWidth());
             row.setMinimumHeight(table.getHeight()/(players.length+3));
