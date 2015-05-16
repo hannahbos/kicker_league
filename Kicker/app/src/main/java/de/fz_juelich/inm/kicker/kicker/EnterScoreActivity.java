@@ -38,7 +38,8 @@ public class EnterScoreActivity extends ActionBarActivity {
     TextView predict_red;
     TextView predict_black;
 
-
+    String server_url = "http://dper.de";
+    int server_port = 9898;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +59,7 @@ public class EnterScoreActivity extends ActionBarActivity {
         player_black1 = (TextView) findViewById(R.id.player_black1);
         predict_black = (TextView) findViewById(R.id.predict_black);
 
-        String request_url = "http://dper.de:9898/getcurrentgame/";
+        String request_url = server_url+":"+server_port+"/getcurrentgame/";
         Log.i("onCreate", "url: " + request_url);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, request_url, new Response.Listener<String>() {
             @Override
@@ -133,7 +134,7 @@ public class EnterScoreActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.cancelgame_menu) {
-            String request_url = "http://dper.de:9898/cancelcurrentgame/";
+            String request_url = server_url+":"+server_port+"/cancelcurrentgame/";
             Log.i("onOptionsItemSelected", "url: " + request_url);
             StringRequest stringRequest = new StringRequest(Request.Method.GET, request_url, new Response.Listener<String>() {
                 @Override
@@ -164,7 +165,7 @@ public class EnterScoreActivity extends ActionBarActivity {
 
     public void endGame(View v){
         Log.i("endGame", "ending game");
-        String url = "http://dper.de:9898/endgame/";
+        String url = server_url+":"+server_port+"/endgame/";
         RatingBar score_red = (RatingBar) findViewById(R.id.score_red);
         RatingBar score_black = (RatingBar) findViewById(R.id.score_black);
         if ((score_red.getRating() == 6) ^ (score_black.getRating() == 6)) {

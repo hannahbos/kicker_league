@@ -53,6 +53,9 @@ public class MainActivity extends ActionBarActivity {
     RequestQueue queue;
     SectionsPagerAdapter mSectionsPagerAdapter;
 
+    static String server_url = "http://dper.de";
+    static int server_port = 9898;
+
     /**
      * The {@link ViewPager} that will host the section contents.
      */
@@ -113,7 +116,7 @@ public class MainActivity extends ActionBarActivity {
             builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    String url = "http://dper.de:9898/addplayer/";
+                    String url = server_url+":"+server_port+"/addplayer/";
                     String request_url = url + name.getText();
 
                     Log.i("addplayer_menu", "url: " + request_url);
@@ -152,7 +155,7 @@ public class MainActivity extends ActionBarActivity {
         }
         else if (id == R.id.restartgame_menu) {
             Log.i("restartgame_menu", "restarting game");
-            String url = "http://dper.de:9898/restartgame/";
+            String url = server_url+":"+server_port+"/restartgame/";
             Log.i("startGame", "url: " + url);
             StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
                 @Override
@@ -354,7 +357,7 @@ public class MainActivity extends ActionBarActivity {
             all = Arrays.asList(new Button[4]);
             plus.setEnabled(false);
 
-            StringRequest stringRequest = new StringRequest(Request.Method.GET, "http://dper.de:9898/getplayers/", new Response.Listener<String>() {
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, server_url+":"+server_port+"/getplayers/", new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
                     Log.i("refresh_request", "response: " + response);
@@ -390,7 +393,7 @@ public class MainActivity extends ActionBarActivity {
             });
 
 
-            String request_url = "http://dper.de:9898/getcurrentgame/";
+            String request_url = server_url+":"+server_port+"/getcurrentgame/";
             Log.i("refresh", "url: " + request_url);
             StringRequest stringRequest_currentgame = new StringRequest(Request.Method.GET, request_url, new Response.Listener<String>() {
                 @Override
@@ -469,7 +472,7 @@ public class MainActivity extends ActionBarActivity {
             builder.setPositiveButton("Hell yeah!", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    String request_url = "http://dper.de:9898/deleteplayer/" + player_id;
+                    String request_url = server_url+":"+server_port+"/deleteplayer/" + player_id;
                     Log.i("deletePlayer", "url: " + request_url);
                     StringRequest stringRequest = new StringRequest(Request.Method.GET, request_url, new Response.Listener<String>() {
                         @Override
@@ -545,7 +548,7 @@ public class MainActivity extends ActionBarActivity {
         }
         public void startGame(View v){
             Log.i("startGame", "starting game");
-            String url = "http://dper.de:9898/startgame/";
+            String url = server_url+":"+server_port+"/startgame/";
             String request_url = url + buttonPlayerMap.get(all.get(0)).id + "/" + buttonPlayerMap.get(all.get(1)).id +
                     "/" + buttonPlayerMap.get(all.get(2)).id + "/" + buttonPlayerMap.get(all.get(3)).id;
             Log.i("startGame", "url: " + request_url);
@@ -621,7 +624,7 @@ public class MainActivity extends ActionBarActivity {
         void refresh(){
             players = null;
 
-            StringRequest stringRequest = new StringRequest(Request.Method.GET, "http://dper.de:9898/getplayers/", new Response.Listener<String>() {
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, server_url+":"+server_port+"/getplayers/", new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
                     Log.i("refresh_request", "response: " + response);
